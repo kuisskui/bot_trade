@@ -16,8 +16,12 @@ def check_initialization():
 
 
 def check_symbol(symbol):
-    if not mt5.check_symbol(symbol):
-        raise Exception(f"Failed to check symbol: {symbol}")
+    # Ensure the symbol is visible in the Market Watch
+    symbol_info = mt5.symbol_info(symbol)
+    if not symbol_info.visible:
+        if not mt5.symbol_select(symbol, True):
+            raise Exception(f"Failed to check symbol: {symbol}")
+
     return True
 
 
@@ -148,7 +152,7 @@ def close_order(position):
 
 def get_active_positions(symbol):
     check_initialization()
-    positions = mt5.positions_get(symbol)
+    positions = mt5.positions_get(symbol=symbol)
 
     if positions is None or len(positions) == 0:
         print(f"No active positions found for symbol {symbol}")

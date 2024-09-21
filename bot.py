@@ -19,8 +19,8 @@ class Bot:
         print("Bot: Succeeded to start scheduler")
 
         self.scheduler.add_job(
-            self.task,
-            trigger=IntervalTrigger(seconds=60),
+            self.task_ma_crossing_trade,
+            trigger=IntervalTrigger(seconds=3),
         )
         print("Bot: Succeeded to add job")
 
@@ -88,6 +88,3 @@ class Bot:
             if mt5_api.get_active_positions(symbol)[0].type == 0:
                 mt5_api.close_all_orders()
                 mt5_api.place_trade(symbol, lot, "sell")
-
-
-
