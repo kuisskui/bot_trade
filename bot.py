@@ -20,7 +20,7 @@ class Bot:
 
         self.scheduler.add_job(
             self.task_ma_crossing_trade,
-            trigger=IntervalTrigger(seconds=3),
+            trigger=IntervalTrigger(seconds=30),
         )
         print("Bot: Succeeded to add job")
 
