@@ -30,7 +30,7 @@ class Bot:
         self.scheduler.shutdown()
         print("Bot: Succeeded to shutdown scheduler")
 
-        mt5_api.shutdown_mt5()
+        mt5_api.shutdown()
         print("Bot: Succeeded to shutdown MetaTrader 5")
 
     def connect_to_mt5(self, attempt_limit=5):
@@ -40,7 +40,7 @@ class Bot:
             print("Bot: Failed to connect to MetaTrader 5 after reaching attempt limit")
             return
 
-        if mt5_api.initialize_mt5(self.account_id, self.password, self.server):
+        if mt5_api.initialize(self.account_id, self.password, self.server):
             print("Bot: Connected to MetaTrader 5 successfully")
         else:
             print(f"Bot: Failed to connect, retrying... (Attempts left: {attempt_limit - 1})")
