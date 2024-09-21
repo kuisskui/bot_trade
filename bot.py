@@ -50,8 +50,8 @@ class Bot:
         symbol = "BTCUSD"
         lot = 0.01
         print("Bot: task is called")
-        current = mt5_api.iMA(symbol, mt5.TIMEFRAME_M1, 14,0)
-        previous = mt5_api.iMA(symbol, mt5.TIMEFRAME_M1, 14, 1)
+        current = mt5_api.get_moving_average(symbol, mt5.TIMEFRAME_M1, 14, 0)
+        previous = mt5_api.get_moving_average(symbol, mt5.TIMEFRAME_M1, 14, 1)
         # print("=====================================")
         # print(time.time())
         # print("current MA14")
@@ -69,4 +69,25 @@ class Bot:
             if mt5_api.get_active_positions(symbol)[0].type == 0:
                 mt5_api.close_all_orders()
                 mt5_api.place_trade(symbol, lot,"sell")
+
+    def task_ma_crossing_trade(self):
+        symbol = "BTCUSD"
+        time_frame = mt5.TIMEFRAME_M1
+        lot = 0.1
+        short_period = 10
+        long_period = 50
+
+        short_ma = mt5_api.get_moving_average(symbol, time_frame, short_period)
+        long_ma = mt5_api.get_moving_average(symbol, time_frame, long_period)
+
+        if short_ma > long_ma:
+            if mt5_api.get_active_positions(symbol)[0].type == 1:
+                mt5_api.close_all_orders()
+                mt5_api.place_trade(symbol, lot, "buy")
+        else:
+            if mt5_api.get_active_positions(symbol)[0].type == 0:
+                mt5_api.close_all_orders()
+                mt5_api.place_trade(symbol, lot, "sell")
+
+
 

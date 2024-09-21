@@ -65,7 +65,7 @@ def place_trade(symbol, volume, trade_type, sl=0.0, tp=0.0, deviation=20, magic=
     return True
 
 
-def iMA(symbol, timeframe, period, shift=0):
+def get_moving_average(symbol, timeframe, period, shift=0):
     check_initialization()
     check_symbol(symbol)
 
