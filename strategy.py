@@ -16,7 +16,7 @@ class Strategy:
         trigger = CronTrigger(second=0)
         trigger_debug = IntervalTrigger(seconds=3)
         self.scheduler.start()
-
+        self.ma_crossing_trade()
         self.scheduler.add_job(
             self.ma_crossing_trade,
             kwargs={
