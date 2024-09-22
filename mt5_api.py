@@ -44,8 +44,11 @@ def place_trade(symbol, volume, trade_type, sl=0.0, tp=0.0, deviation=20, magic=
         "type_filling": ORDER_FILLING_IOC,
     }
 
-    response = order_send(request)
-    print(f"Order sent: {'Buy' if response.request.action==0 else 'Sell'} {response.request.symbol} at {response.request.price}")
+    result = order_send(request)
+    if result.retcode != TRADE_RETCODE_DONE:
+        print(f"Failed to send order, error: {result.retcode}, description: {last_error()}")
+
+    print(f"Order sent: {'Buy' if result.request.action==0 else 'Sell'} {result.request.symbol} at {result.request.price}")
     return True
 
 

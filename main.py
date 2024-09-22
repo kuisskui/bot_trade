@@ -27,6 +27,7 @@ async def startup_event():
         bot.start()
         print("fastapi: bot started")
     except Exception as e:
+        bot.stop()
         await shutdown_event(e)
 
 

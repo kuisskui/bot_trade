@@ -30,6 +30,10 @@ class Strategy:
         )
         print("schedule start")
 
+    def stop(self):
+        self.scheduler.shutdown()
+        self.shutdown()
+
     def initialize(self):
         if not mt5.initialize():
             raise InitializationException('mt5 initialization failed')

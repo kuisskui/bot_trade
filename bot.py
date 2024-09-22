@@ -8,4 +8,5 @@ class Bot:
 
     def stop(self):
         print('Bot: stop is called')
+        self.strategy.stop()
 
