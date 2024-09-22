@@ -1,4 +1,3 @@
-from bot import Bot
 import mt5_api as mt5
 from exception import *
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
@@ -7,18 +6,13 @@ from apscheduler.triggers.interval import IntervalTrigger
 from datetime import datetime
 
 
-class KuiBot(Bot):
+class Strategy:
     def __init__(self):
         self.scheduler = AsyncIOScheduler()
         self.previous_short_ma = None
         self.previous_long_ma = None
 
-    def initialize(self):
-        if not mt5.initialize():
-            raise InitializationException('mt5 initialization failed')
-        self.scheduler.start()
-
-    def main_task(self):
+    def start(self):
         self.initialize()
 
         trigger = CronTrigger(second=0)
@@ -33,8 +27,13 @@ class KuiBot(Bot):
                 "short_period": 10,
                 "long_period": 50,
             },
-            trigger=trigger_debug
+            trigger=trigger
         )
+
+    def initialize(self):
+        if not mt5.initialize():
+            raise InitializationException('mt5 initialization failed')
+        self.scheduler.start()
 
     def ma_crossing_trade(self, symbol, time_frame, lot, short_period, long_period):
         print(f"-----KuiBot: trade is called: [{datetime.now()}]-----")

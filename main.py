@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from dotenv import load_dotenv
 from bot import Bot
-from kui_bot import KuiBot
+from strategy import KuiBot
 import uvicorn
 import os
 import asyncio

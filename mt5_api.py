@@ -20,13 +20,13 @@ def check_symbol(symbol):
 
 
 def place_trade(symbol, volume, trade_type, sl=0.0, tp=0.0, deviation=20, magic=234000, comment="Python trade script"):
-    check_initialization()
-    check_symbol(symbol)
 
     if trade_type == "buy":
         order_type = ORDER_TYPE_BUY
     elif trade_type == "sell":
         order_type = ORDER_TYPE_SELL
+    elif trade_type == ORDER_TYPE_BUY or trade_type == ORDER_TYPE_SELL:
+        order_type = trade_type
     else:
         raise Exception(f"Invalid trade type. Use 'buy' or 'sell'.: {trade_type}")
 
@@ -53,9 +53,6 @@ def place_trade(symbol, volume, trade_type, sl=0.0, tp=0.0, deviation=20, magic=
 def get_moving_average(symbol, timeframe, period, shift=0):
     rates = copy_rates_from_pos(symbol, timeframe, shift, period + shift)
 
-    if rates is None or len(rates) == 0:
-        raise Exception(f"Failed to copy rates from {symbol}")
-
     data = pd.DataFrame(rates)
 
     data['time'] = pd.to_datetime(data['time'], unit='s')
@@ -64,16 +61,14 @@ def get_moving_average(symbol, timeframe, period, shift=0):
 
 
 def close_all_orders():
-    check_initialization()
-
     positions = positions_get()
 
     if positions is None or len(positions) == 0:
-        for position in positions:
-            print(f"Closing position: {position.ticket}, {position.symbol}, {position.volume} lots")
-            close_order(position)
-        return True
-    print("No open positions found")
+        print("No open positions found")
+
+    for position in positions:
+        print(f"Closing position: {position.ticket}, {position.symbol}, {position.volume} lots")
+        close_order(position)
 
 
 def close_order(position):
@@ -82,17 +77,7 @@ def close_order(position):
     position_type = position.type
     ticket = position.ticket
 
-    # Get the latest price data for the symbol
-    symbol_info = symbol_info(symbol)
-    if symbol_info is None:
-        print(f"Failed to get symbol info for {symbol}")
-        return
-
-    # Ensure the symbol is selected
-    if not symbol_info.visible:
-        if not symbol_select(symbol, True):
-            print(f"Failed to select symbol {symbol}")
-            return
+    symbol = symbol_info(symbol)
 
     # Get the current price to close the order
     if position_type == POSITION_TYPE_BUY:
@@ -121,9 +106,9 @@ def close_order(position):
     }
 
     # Send the close order request
-    result = order_send(request)
-    if result.retcode != TRADE_RETCODE_DONE:
-        print(f"Failed to close order {ticket}, error: {result.retcode}, description: {last_error()}")
+    response = order_send(request)
+    if response.retcode != TRADE_RETCODE_DONE:
+        print(f"Failed to close order {ticket}, error: {response.retcode}, description: {last_error()}")
     else:
         print(f"Order {ticket} closed successfully")
 
