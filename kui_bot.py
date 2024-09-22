@@ -33,7 +33,7 @@ class KuiBot(Bot):
                 "short_period": 10,
                 "long_period": 50,
             },
-            trigger=trigger
+            trigger=trigger_debug
         )
 
     def ma_crossing_trade(self, symbol, time_frame, lot, short_period, long_period):

@@ -19,14 +19,6 @@ def check_symbol(symbol):
     return True
 
 
-def order_send(request):
-    response = order_send(request)
-    if response.retcode != TRADE_RETCODE_DONE:
-        raise Exception(f"Failed to place trade: {response.retcode}, description: {last_error()}")
-    print(f"Trade placed successfully: {response}")
-    return True
-
-
 def place_trade(symbol, volume, trade_type, sl=0.0, tp=0.0, deviation=20, magic=234000, comment="Python trade script"):
     check_initialization()
     check_symbol(symbol)
