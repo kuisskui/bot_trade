@@ -16,7 +16,7 @@ class Strategy:
         trigger = CronTrigger(second=0)
         trigger_debug = IntervalTrigger(seconds=3)
         self.scheduler.start()
-        self.ma_crossing_trade()
+        self.ma_crossing_trade("BTCUSD", mt5.TIMEFRAME_M1, 0.1, 10, 50)
         self.scheduler.add_job(
             self.ma_crossing_trade,
             kwargs={
