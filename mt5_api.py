@@ -11,8 +11,8 @@ def check_initialization():
 
 def check_symbol(symbol):
     # Ensure the symbol is visible in the Market Watch
-    symbol_info = symbol_info(symbol)
-    if not symbol_info.visible:
+    symbol = symbol_info(symbol)
+    if not symbol.visible:
         if not symbol_select(symbol, True):
             raise Exception(f"Failed to check symbol: {symbol}")
 
