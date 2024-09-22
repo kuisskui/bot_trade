@@ -15,7 +15,6 @@ def check_symbol(symbol):
     if not symbol.visible:
         if not symbol_select(symbol, True):
             raise Exception(f"Failed to check symbol: {symbol}")
-
     return True
 
 
@@ -45,8 +44,8 @@ def place_trade(symbol, volume, trade_type, sl=0.0, tp=0.0, deviation=20, magic=
         "type_filling": ORDER_FILLING_IOC,
     }
 
-    order_send(request)
-
+    response = order_send(request)
+    print(f"Order sent: {'Buy' if response.request.action==0 else 'Sell'} {response.request.symbol} at {response.request.price}")
     return True
 
 

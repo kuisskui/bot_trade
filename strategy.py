@@ -26,7 +26,7 @@ class Strategy:
                 "short_period": 10,
                 "long_period": 50,
             },
-            trigger=trigger_debug
+            trigger=trigger
         )
         print("schedule start")
 
@@ -66,7 +66,10 @@ class Strategy:
             # Bullish crossover: Buy signal
             print("Bullish crossover detected (Buy signal)")
             active_positions = mt5.get_active_positions(symbol)
-            if active_positions[0].type == 1:
+            if not active_positions:
+                mt5.place_trade(symbol, lot, "buy")
+
+            elif active_positions[0].type == 1:
                 mt5.close_all_orders()
                 mt5.place_trade(symbol, lot, "buy")
 
@@ -74,7 +77,9 @@ class Strategy:
             # Bearish crossover: Sell signal
             print("Bearish crossover detected (Sell signal)")
             active_positions = mt5.get_active_positions(symbol)
-            if active_positions[0].type == 0:
+            if not active_positions:
+                mt5.place_trade(symbol, lot, "sell")
+            elif active_positions[0].type == 0:
                 mt5.close_all_orders()
                 mt5.place_trade(symbol, lot, "sell")
 
