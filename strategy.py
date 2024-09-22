@@ -13,10 +13,9 @@ class Strategy:
         self.previous_long_ma = None
 
     def start(self):
-        self.initialize()
-
         trigger = CronTrigger(second=0)
         trigger_debug = IntervalTrigger(seconds=3)
+        self.scheduler.start()
 
         self.scheduler.add_job(
             self.ma_crossing_trade,
@@ -27,15 +26,20 @@ class Strategy:
                 "short_period": 10,
                 "long_period": 50,
             },
-            trigger=trigger
+            trigger=trigger_debug
         )
+        print("schedule start")
 
     def initialize(self):
         if not mt5.initialize():
             raise InitializationException('mt5 initialization failed')
-        self.scheduler.start()
+
+    def shutdown(self):
+        mt5.shutdown()
 
     def ma_crossing_trade(self, symbol, time_frame, lot, short_period, long_period):
+        self.initialize()
+
         print(f"-----KuiBot: trade is called: [{datetime.now()}]-----")
 
         current_short_ma = mt5.get_moving_average(symbol, time_frame, short_period)
@@ -62,10 +66,7 @@ class Strategy:
             # Bullish crossover: Buy signal
             print("Bullish crossover detected (Buy signal)")
             active_positions = mt5.get_active_positions(symbol)
-            if not active_positions:
-                mt5.place_trade(symbol, lot, "buy")
-
-            elif active_positions[0].type == 1:
+            if active_positions[0].type == 1:
                 mt5.close_all_orders()
                 mt5.place_trade(symbol, lot, "buy")
 
@@ -73,12 +74,11 @@ class Strategy:
             # Bearish crossover: Sell signal
             print("Bearish crossover detected (Sell signal)")
             active_positions = mt5.get_active_positions(symbol)
-            if not active_positions:
-                mt5.place_trade(symbol, lot, "sell")
-
-            elif active_positions[0].type == 0:
+            if active_positions[0].type == 0:
                 mt5.close_all_orders()
                 mt5.place_trade(symbol, lot, "sell")
 
         self.previous_short_ma = current_short_ma
         self.previous_long_ma = current_long_ma
+
+        self.shutdown()

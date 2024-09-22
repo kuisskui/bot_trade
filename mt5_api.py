@@ -64,7 +64,7 @@ def close_all_orders():
     positions = positions_get()
 
     if positions is None or len(positions) == 0:
-        print("No open positions found")
+        print("No open positions found for closing orders")
 
     for position in positions:
         print(f"Closing position: {position.ticket}, {position.symbol}, {position.volume} lots")
