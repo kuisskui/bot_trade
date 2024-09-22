@@ -77,8 +77,6 @@ def close_order(position):
     position_type = position.type
     ticket = position.ticket
 
-    symbol = symbol_info(symbol)
-
     # Get the current price to close the order
     if position_type == POSITION_TYPE_BUY:
         price = symbol_info_tick(symbol).bid  # Close buy at the bid price
