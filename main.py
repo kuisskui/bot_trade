@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from dotenv import load_dotenv
 from bot import Bot
-from strategy import KuiBot
+from strategy import Strategy
 import uvicorn
 import os
 import asyncio
@@ -14,7 +14,8 @@ scheduler = AsyncIOScheduler()
 account_id = 176471571  # Your account number
 password = os.getenv("password")  # Your MetaTrader password
 server = "Exness-MT5Trial7"  # The server for your account
-bot = KuiBot()
+strategy = Strategy()
+bot = Bot(strategy)
 
 
 @app.on_event("startup")
