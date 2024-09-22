@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from dotenv import load_dotenv
 from bot import Bot
+from kui_bot import KuiBot
 import uvicorn
 import os
 import asyncio
@@ -13,20 +14,24 @@ scheduler = AsyncIOScheduler()
 account_id = 176471571  # Your account number
 password = os.getenv("password")  # Your MetaTrader password
 server = "Exness-MT5Trial7"  # The server for your account
-bot = Bot(account_id, password, server, scheduler)
+bot = KuiBot()
 
 
 @app.on_event("startup")
 async def startup_event():
-    print("fastapi: startup")
+    print("fastapi: startup_event")
 
     print("fastapi: call bot start")
-    bot.start()
+    try:
+        bot.start()
+        print("fastapi: bot started")
+    except Exception as e:
+        await shutdown_event(e)
 
 
 @app.on_event("shutdown")
 async def shutdown_event():
-    print("fastapi: shutdown")
+    print("fastapi: shutdown_event")
 
     print("fastapi: call bot stop")
     bot.stop()
