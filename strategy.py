@@ -14,7 +14,7 @@ class Strategy:
 
     def start(self):
         symbol = "BTCUSD"
-        timeframe = mt5_api.TIMEFRAME_M1
+        timeframe = mt5_api.TIMEFRAME_M15
         lot = 0.1
         short_period = 10
         long_period = 50
