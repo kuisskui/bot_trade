@@ -71,11 +71,7 @@ def order_send(request):
 
 
 def copy_rates_from_pos(symbol, timeframe, shift, period):
-    rates = mt.copy_rates_from_pos(symbol, timeframe, shift, period)
-    if not rates:
-        raise Exception(f"Failed to copy rates from {symbol}: {last_error()}")
-
-    return rates
+    return mt.copy_rates_from_pos(symbol, timeframe, shift, period)
 
 
 def positions_get(**kwargs):

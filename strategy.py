@@ -13,18 +13,25 @@ class Strategy:
         self.previous_long_ma = None
 
     def start(self):
+        symbol = "BTCUSD"
+        timeframe = mt5_api.TIMEFRAME_M1
+        lot = 0.1
+        short_period = 10
+        long_period = 50
         trigger = CronTrigger(second=0)
+
         trigger_debug = IntervalTrigger(seconds=3)
+
         self.scheduler.start()
-        self.ma_crossing_trade("BTCUSD", mt5_api.TIMEFRAME_M1, 0.1, 10, 50)
+        self.ma_crossing_trade(symbol, timeframe, lot, short_period, long_period)
         self.scheduler.add_job(
             self.ma_crossing_trade,
             kwargs={
-                "symbol": "BTCUSD",
-                "time_frame": mt5_api.TIMEFRAME_M1,
-                "lot": 0.1,
-                "short_period": 10,
-                "long_period": 50,
+                "symbol": symbol,
+                "time_frame": timeframe,
+                "lot": lot,
+                "short_period": short_period,
+                "long_period": long_period,
             },
             trigger=trigger
         )
