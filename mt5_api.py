@@ -1,7 +1,5 @@
-from MetaTrader5 import *
 import pandas as pd
-from MetaTrader5._core import *
-
+from MetaTrader5 import *
 
 def check_initialization():
     if not initialize():
@@ -46,7 +44,8 @@ def place_trade(symbol, volume, trade_type, sl=0.0, tp=0.0, deviation=20, magic=
 
     result = order_send(request)
     if result.retcode != TRADE_RETCODE_DONE:
-        print(f"Failed to send order, error: {result.retcode}, description: {last_error()}")
+        print(f"Failed to send order, error: {result.retcode}")
+        return False
 
     print(f"Order sent: {'Buy' if result.request.action==0 else 'Sell'} {result.request.symbol} at {result.request.price}")
     return True
