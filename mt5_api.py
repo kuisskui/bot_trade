@@ -1,6 +1,6 @@
-import numpy
 import pandas as pd
 import PythonMetaTrader5 as mt
+from MetaTrader5 import *
 
 
 def initialize():
