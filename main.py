@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from PythonMetaTrader5 import *
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from dotenv import load_dotenv
 from bot import Bot
@@ -16,6 +17,7 @@ password = os.getenv("password")  # Your MetaTrader password
 server = "Exness-MT5Trial7"  # The server for your account
 strategy = Strategy()
 bot = Bot(strategy)
+broker = Broker(account_id, password, server)
 
 
 @app.on_event("startup")
