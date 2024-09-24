@@ -98,3 +98,17 @@ class Strategy:
         self.previous_long_ma = current_long_ma
 
         self.shutdown()
+
+    def rsi_trade(self, symbol, time_frame, lot, overbought, oversold):
+        self.initialize()
+        print(f"-----KuiBot: trade is called: [{datetime.now()}]-----")
+        rsi = mt5_api.get_relative_strength_index(symbol, time_frame)
+        print(f"RSI percentage: {rsi}%")
+        if rsi > overbought:
+            print("RSI is overbought")
+            mt5_api.place_trade(symbol, lot, "sell", deviation=100)
+        if rsi < oversold:
+            print("RSI is oversold")
+            mt5_api.place_trade(symbol, lot, "buy", deviation=100)
+        self.shutdown()
+
