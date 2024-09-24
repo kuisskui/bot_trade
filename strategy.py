@@ -13,12 +13,12 @@ class Strategy:
         self.previous_long_ma = None
 
     def start(self):
-        symbol = "BTCUSD"
-        timeframe = mt5_api.TIMEFRAME_M15
+        symbol = "USOIL"
+        timeframe = mt5_api.TIMEFRAME_M1
         lot = 0.1
         short_period = 10
         long_period = 50
-        trigger = CronTrigger(minute='0,15,30,45', second=0)
+        trigger = CronTrigger(second=0)
 
         trigger_debug = IntervalTrigger(seconds=3)
 
@@ -73,7 +73,7 @@ class Strategy:
         else:
             print("Current trend: DOWN")
 
-        if not crossed_up:
+        if crossed_up:
             # Bullish crossover: Buy signal
             print("Bullish crossover detected (Buy signal)")
             active_positions = mt5_api.positions_get(symbol=symbol)
@@ -84,7 +84,7 @@ class Strategy:
                 mt5_api.close_all_orders()
                 mt5_api.place_trade(symbol, lot, "buy", deviation=100)
 
-        elif not crossed_down:
+        elif crossed_down:
             # Bearish crossover: Sell signal
             print("Bearish crossover detected (Sell signal)")
             active_positions = mt5_api.positions_get(symbol=symbol)
