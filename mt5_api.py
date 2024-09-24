@@ -1,6 +1,7 @@
 import pandas as pd
 import PythonMetaTrader5 as mt
 from MetaTrader5 import *
+import numpy as np
 
 
 def initialize():
@@ -10,14 +11,6 @@ def initialize():
     raise Exception(f"Failed to check initialization: {last_error()}")
 
 
-def shutdown():
-    mt.shutdown()
-
-
-def last_error():
-    return mt.last_error()
-
-
 def login(login, password, server):
     if mt.login(login, password, server):
         return True
@@ -25,15 +18,172 @@ def login(login, password, server):
     raise Exception(f"Failed to login {login}: {last_error()}")
 
 
+def shutdown():
+    mt.shutdown()
+
+
+def version():
+    v = mt.version()
+    if not v:
+        raise Exception(f"Failed to get version: {last_error()}")
+    return v
+
+
+def last_error():
+    return mt.last_error()
+
+
+def account_info():
+    info = mt.account_info()
+    if not info:
+        raise Exception(f"Failed to get account info: {last_error()}")
+    return info
+
+
+def terminal_info():
+    info = mt.terminal_info()
+    if not info:
+        raise Exception(f"Failed to get terminal info: {last_error()}")
+    return info
+
+
+def symbols_total():
+    total = mt.symbols_total()
+    if not total:
+        raise Exception(f"Failed to get symbols total: {last_error()}")
+    return total
+
+
 def symbol_info(symbol):
-    if not mt.symbol_select(symbol, True):
+    if not symbol_select(symbol, True):
         raise Exception(f"Failed to select {symbol}: {last_error()}")
 
     info = mt.symbol_info(symbol)
     if not info:
-        raise Exception(f"Failed to select {symbol}: {last_error()}")
+        raise Exception(f"Failed to get info {symbol}: {last_error()}")
 
     return info
+
+
+def symbol_info_tick(symbol):
+    info_tick = mt.symbol_info_tick(symbol)
+    if not info_tick:
+        raise Exception(f"Failed to get info tick {symbol}: {last_error()}")
+
+    return info_tick
+
+
+def symbol_select(symbol, enable=None):
+    return mt.symbol_select(symbol, enable)
+
+
+def copy_rates_from(symbol, timeframe, date_from, count):
+    arr = mt.copy_rates_from(symbol, timeframe, date_from, count)
+    if not isinstance(arr, np.ndarray):
+        raise Exception(f"Failed to get copy rates from {symbol}: {last_error()}")
+    return arr
+
+
+def copy_rates_from_pos(symbol, timeframe, shift, period):
+    arr = mt.copy_rates_from_pos(symbol, timeframe, shift, period)
+    if not isinstance(arr, np.ndarray):
+        raise Exception(f"Failed to get copy rates from pos {symbol}: {last_error()}")
+    return arr
+
+
+def copy_rates_range(symbol, timeframe, date_from, date_to):
+    arr = mt.copy_rates_range(symbol, timeframe, date_from, date_to)
+    if not isinstance(arr, np.ndarray):
+        raise Exception(f"Failed to get copy rates range {symbol}: {last_error()}")
+    return arr
+
+
+def copy_ticks_from(symbol, date_from, count, flags):
+    arr = mt.copy_ticks_from(symbol, date_from, count, flags)
+    if not isinstance(arr, np.ndarray):
+        raise Exception(f"Failed to get copy ticks from {symbol}: {last_error()}")
+    return arr
+
+
+def copy_ticks_range(symbol, date_from, date_to, flags):
+    arr = mt.copy_ticks_range(symbol, date_from, date_to, flags)
+    if not isinstance(arr, np.ndarray):
+        raise Exception(f"Failed to get copy ticks range {symbol}: {last_error()}")
+    return arr
+
+
+def orders_total():
+    return mt.orders_total()
+
+
+def orders_get(**kwargs):
+    order = mt.orders_get(**kwargs)
+    if not order:
+        raise Exception(f"Failed to get orders: {last_error()}")
+    return order
+
+
+def order_calc_margin(action, symbol, volume, price):
+    margin = mt.order_calc_margin(action, symbol, volume, price)
+    if not margin:
+        raise Exception(f"Failed to get order margin: {last_error()}")
+    return margin
+
+
+def order_calc_profit(action, symbol, volume, price_open, price_close):
+    profit = mt.order_calc_profit(action, symbol, volume, price_open, price_close)
+    if not profit:
+        raise Exception(f"Failed to get order profit: {last_error()}")
+    return profit
+
+
+def order_check(request):
+    return mt.order_check(request)
+
+
+def order_send(request):
+    result = mt.order_send(request)
+
+    if not result:
+        raise Exception(f"Failed to send order {request}: {last_error()}")
+
+    if result.retcode == mt.TRADE_RETCODE_DONE:
+        return result
+
+    raise Exception(f"Failed to send order {request}: {last_error()}: {result}")
+
+
+def positions_total():
+    return mt.positions_total()
+
+
+def positions_get(**kwargs):
+    positions = mt.positions_get(**kwargs)
+    if positions is None:
+        raise Exception(f"Failed to get positions: {last_error()}")
+    return positions
+
+
+def history_orders_total(date_from, date_to):
+    return mt.history_orders_total(date_from, date_to)
+
+
+def history_orders_get(**kwargs):
+    orders = mt.history_orders_get(**kwargs)
+    if orders is None:
+        raise Exception(f"Failed to get history orders: {last_error()}")
+    return orders
+
+
+def history_deals_total(date_from, date_to):
+    return mt.history_deals_total(date_from, date_to)
+
+
+def history_deals_get(**kwargs):
+    orders = mt.history_deals_get(**kwargs)
+    if orders is None:
+        raise Exception(f"Failed to get history orders: {last_error()}")
+    return orders
 
 
 def buy(symbol, volume):
@@ -58,29 +208,6 @@ def sell(symbol, volume):
     raise Exception(f"Failed to sell {symbol}: {order}: {last_error()}")
 
 
-def order_send(request):
-    result = mt.order_send(request)
-
-    if not result:
-        raise Exception(f"Failed to send order {request}: {last_error()}")
-
-    if result.retcode == mt.TRADE_RETCODE_DONE:
-        return result
-
-    raise Exception(f"Failed to send order {request}: {last_error()}: {result}")
-
-
-def copy_rates_from_pos(symbol, timeframe, shift, period):
-    return mt.copy_rates_from_pos(symbol, timeframe, shift, period)
-
-
-def positions_get(**kwargs):
-    positions = mt.positions_get(**kwargs)
-    if not positions:
-        return tuple()
-    return positions
-
-
 def place_trade(symbol, volume, trade_type, sl=0.0, tp=0.0, deviation=20, magic=234000, comment="Python trade script"):
     if trade_type == "buy":
         order_type = mt.ORDER_TYPE_BUY
@@ -96,7 +223,7 @@ def place_trade(symbol, volume, trade_type, sl=0.0, tp=0.0, deviation=20, magic=
         "symbol": symbol,
         "volume": volume,
         "type": order_type,
-        "price": mt.symbol_info_tick(symbol).ask,
+        "price": symbol_info_tick(symbol).ask,
         "sl": sl,
         "tp": tp,
         "deviation": deviation,
@@ -107,40 +234,6 @@ def place_trade(symbol, volume, trade_type, sl=0.0, tp=0.0, deviation=20, magic=
     }
 
     return order_send(request)
-
-
-def get_moving_average(symbol, timeframe, shift=0, period=14):
-    rates = copy_rates_from_pos(symbol, timeframe, shift, period)
-    data = pd.DataFrame(rates)
-    data['time'] = pd.to_datetime(data['time'], unit='s')
-    ma = data['close'].rolling(window=period).mean().iloc[-1 - shift]
-    return ma
-
-
-def get_relative_strength_index(symbol, timeframe, shift=0, period=14):
-    # Get historical data
-    rates = copy_rates_from_pos(symbol, timeframe, shift, period)
-    if rates is None or len(rates) == 0:
-        print(f"Failed to retrieve historical data for {symbol}")
-        return None
-
-    df = pd.DataFrame(rates)
-    df['time'] = pd.to_datetime(df['time'], unit='s')
-
-    delta = df['close'].diff()
-
-    gain = delta.where(delta > 0, 0)
-    loss = -delta.where(delta < 0, 0)
-
-    avg_gain = gain.rolling(window=period).mean()
-    avg_loss = loss.rolling(window=period).mean()
-
-    rs = avg_gain / avg_loss
-
-    # Calculate the RSI
-    df['rsi'] = 100 - (100 / (1 + rs))
-
-    return df['rsi']
 
 
 def close_all_orders():
