@@ -1,5 +1,6 @@
 import mt5_api
 from exception import *
+from indicator import get_moving_average, get_relative_strength_index
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.triggers.cron import CronTrigger
 from apscheduler.triggers.interval import IntervalTrigger
@@ -13,17 +14,19 @@ class Strategy:
         self.previous_long_ma = None
 
     def start(self):
-        symbol = "USOIL"
-        timeframe = mt5_api.TIMEFRAME_M1
+        self.initialize()
+        symbol = "EURUSD"
+        timeframe = mt5_api.TIMEFRAME_M5
         lot = 0.1
-        short_period = 10
-        long_period = 50
+        short_period = 5
+        long_period = 20
         trigger = CronTrigger(second=0)
+        trigger_m5 = CronTrigger(minute='*/5', second=0)
 
         trigger_debug = IntervalTrigger(seconds=3)
 
-        self.scheduler.start()
         self.ma_crossing_trade(symbol, timeframe, lot, short_period, long_period)
+        self.scheduler.start()
         self.scheduler.add_job(
             self.ma_crossing_trade,
             kwargs={
@@ -33,7 +36,7 @@ class Strategy:
                 "short_period": short_period,
                 "long_period": long_period,
             },
-            trigger=trigger
+            trigger=trigger_m5
         )
         print("schedule start")
 
@@ -53,8 +56,8 @@ class Strategy:
 
         print(f"-----KuiBot: trade is called: [{datetime.now()}]-----")
 
-        current_short_ma = mt5_api.get_moving_average(symbol, time_frame, short_period)
-        current_long_ma = mt5_api.get_moving_average(symbol, time_frame, long_period)
+        current_short_ma = get_moving_average(symbol, time_frame, short_period)
+        current_long_ma = get_moving_average(symbol, time_frame, long_period)
 
         # If this is the first run, store the MAs and return (no crossover check yet)
         if self.previous_short_ma is None or self.previous_long_ma is None:
@@ -102,7 +105,7 @@ class Strategy:
     def rsi_trade(self, symbol, time_frame, lot, overbought, oversold):
         self.initialize()
         print(f"-----KuiBot: trade is called: [{datetime.now()}]-----")
-        rsi = mt5_api.get_relative_strength_index(symbol, time_frame)
+        rsi = get_relative_strength_index(symbol, time_frame)
         print(f"RSI percentage: {rsi}%")
         if rsi > overbought:
             print("RSI is overbought")

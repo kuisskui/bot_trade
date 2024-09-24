@@ -11,12 +11,12 @@ import asyncio
 load_dotenv()
 
 app = FastAPI()
-scheduler = AsyncIOScheduler()
 account_id = 176471571  # Your account number
 password = os.getenv("password")  # Your MetaTrader password
 server = "Exness-MT5Trial7"  # The server for your account
 strategy = Strategy()
 bot = Bot(strategy)
+bots = []
 broker = Broker(account_id, password, server)
 
 
@@ -29,8 +29,21 @@ async def startup_event():
         bot.start()
         print("fastapi: bot started")
     except Exception as e:
+        print(e)
         bot.stop()
-        await shutdown_event(e)
+        await shutdown_event()
+
+
+@app.get(path="/bots")
+def get_bots():
+    return f"All bots {bots}"
+
+
+@app.post(path="/bots/trade")
+async def trade(e):
+    bot = Bot(strategy)
+    bot.start()
+    bots.append(bot)
 
 
 @app.on_event("shutdown")
