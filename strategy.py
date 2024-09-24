@@ -18,7 +18,7 @@ class Strategy:
         lot = 0.1
         short_period = 10
         long_period = 50
-        trigger = CronTrigger(hour=0, minute=15, second=0)
+        trigger = CronTrigger(minute='0,15,30,45', second=0)
 
         trigger_debug = IntervalTrigger(seconds=3)
 
