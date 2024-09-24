@@ -24,7 +24,7 @@ def shutdown():
 
 def version():
     v = mt.version()
-    if not v:
+    if v is None:
         raise Exception(f"Failed to get version: {last_error()}")
     return v
 
@@ -35,21 +35,21 @@ def last_error():
 
 def account_info():
     info = mt.account_info()
-    if not info:
+    if info is None:
         raise Exception(f"Failed to get account info: {last_error()}")
     return info
 
 
 def terminal_info():
     info = mt.terminal_info()
-    if not info:
+    if info is None:
         raise Exception(f"Failed to get terminal info: {last_error()}")
     return info
 
 
 def symbols_total():
     total = mt.symbols_total()
-    if not total:
+    if total is None:
         raise Exception(f"Failed to get symbols total: {last_error()}")
     return total
 
@@ -59,7 +59,7 @@ def symbol_info(symbol):
         raise Exception(f"Failed to select {symbol}: {last_error()}")
 
     info = mt.symbol_info(symbol)
-    if not info:
+    if info is None:
         raise Exception(f"Failed to get info {symbol}: {last_error()}")
 
     return info
@@ -67,7 +67,7 @@ def symbol_info(symbol):
 
 def symbol_info_tick(symbol):
     info_tick = mt.symbol_info_tick(symbol)
-    if not info_tick:
+    if info_tick is None:
         raise Exception(f"Failed to get info tick {symbol}: {last_error()}")
 
     return info_tick
@@ -79,60 +79,63 @@ def symbol_select(symbol, enable=None):
 
 def copy_rates_from(symbol, timeframe, date_from, count):
     arr = mt.copy_rates_from(symbol, timeframe, date_from, count)
-    if not isinstance(arr, np.ndarray):
+    if arr is None:
         raise Exception(f"Failed to get copy rates from {symbol}: {last_error()}")
     return arr
 
 
 def copy_rates_from_pos(symbol, timeframe, shift, period):
     arr = mt.copy_rates_from_pos(symbol, timeframe, shift, period)
-    if not isinstance(arr, np.ndarray):
+    if arr is None:
         raise Exception(f"Failed to get copy rates from pos {symbol}: {last_error()}")
     return arr
 
 
 def copy_rates_range(symbol, timeframe, date_from, date_to):
     arr = mt.copy_rates_range(symbol, timeframe, date_from, date_to)
-    if not isinstance(arr, np.ndarray):
+    if arr is None:
         raise Exception(f"Failed to get copy rates range {symbol}: {last_error()}")
     return arr
 
 
 def copy_ticks_from(symbol, date_from, count, flags):
     arr = mt.copy_ticks_from(symbol, date_from, count, flags)
-    if not isinstance(arr, np.ndarray):
+    if arr is None:
         raise Exception(f"Failed to get copy ticks from {symbol}: {last_error()}")
     return arr
 
 
 def copy_ticks_range(symbol, date_from, date_to, flags):
     arr = mt.copy_ticks_range(symbol, date_from, date_to, flags)
-    if not isinstance(arr, np.ndarray):
+    if arr is None:
         raise Exception(f"Failed to get copy ticks range {symbol}: {last_error()}")
     return arr
 
 
 def orders_total():
-    return mt.orders_total()
+    total = mt.orders_total()
+    if total is None:
+        raise Exception(f"Failed to get orders total: {last_error()}")
+    return total
 
 
 def orders_get(**kwargs):
     order = mt.orders_get(**kwargs)
-    if not order:
+    if order is None:
         raise Exception(f"Failed to get orders: {last_error()}")
     return order
 
 
 def order_calc_margin(action, symbol, volume, price):
     margin = mt.order_calc_margin(action, symbol, volume, price)
-    if not margin:
+    if margin is None:
         raise Exception(f"Failed to get order margin: {last_error()}")
     return margin
 
 
 def order_calc_profit(action, symbol, volume, price_open, price_close):
     profit = mt.order_calc_profit(action, symbol, volume, price_open, price_close)
-    if not profit:
+    if profit is None:
         raise Exception(f"Failed to get order profit: {last_error()}")
     return profit
 
@@ -144,7 +147,7 @@ def order_check(request):
 def order_send(request):
     result = mt.order_send(request)
 
-    if not result:
+    if result is None:
         raise Exception(f"Failed to send order {request}: {last_error()}")
 
     if result.retcode == mt.TRADE_RETCODE_DONE:
@@ -154,7 +157,10 @@ def order_send(request):
 
 
 def positions_total():
-    return mt.positions_total()
+    total = mt.positions_total()
+    if total is None:
+        raise Exception(f"Failed to get positions total: {last_error()}")
+    return total
 
 
 def positions_get(**kwargs):
@@ -165,7 +171,10 @@ def positions_get(**kwargs):
 
 
 def history_orders_total(date_from, date_to):
-    return mt.history_orders_total(date_from, date_to)
+    total = mt.history_orders_total(date_from, date_to)
+    if total is None:
+        raise Exception(f"Failed to get history orders total: {last_error()}")
+    return total
 
 
 def history_orders_get(**kwargs):
@@ -176,7 +185,10 @@ def history_orders_get(**kwargs):
 
 
 def history_deals_total(date_from, date_to):
-    return mt.history_deals_total(date_from, date_to)
+    total = mt.history_deals_total(date_from, date_to)
+    if total is None:
+        raise Exception(f"Failed to get history deals total: {last_error()}")
+    return total
 
 
 def history_deals_get(**kwargs):
@@ -188,7 +200,7 @@ def history_deals_get(**kwargs):
 
 def buy(symbol, volume):
     order = mt.Buy(symbol, volume)
-    if not order:
+    if order is None:
         raise Exception(f"Failed to buy {symbol}: {last_error()}")
 
     if order.retcode == mt.TRADE_RETCODE_DONE:
@@ -199,7 +211,7 @@ def buy(symbol, volume):
 
 def sell(symbol, volume):
     order = mt.Sell(symbol, volume)
-    if not order:
+    if order is None:
         raise Exception(f"Failed to sell {symbol}: {last_error()}")
 
     if order.retcode == mt.TRADE_RETCODE_DONE:
