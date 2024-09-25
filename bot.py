@@ -8,9 +8,8 @@ class Bot:
 
     def start(self):
         print('Bot: start is called')
-        self.strategy.start()
 
-    def check(self) -> int:
+    def check(self):
         pass
 
     def trade(self):
