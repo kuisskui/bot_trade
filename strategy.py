@@ -50,7 +50,8 @@ class MovingAverageCrossingOverStrategy:
                 position = mt5_api.place_trade(self.symbol, self.lot, "buy")
 
             elif active_positions[0].type == 1:
-                mt5_api.close_all_position()
+                current_position = mt5_api.positions_get(symbol=self.symbol)
+                mt5_api.close_position(current_position)
                 position = mt5_api.place_trade(self.symbol, self.lot, "buy")
 
         elif signal == "sell":
@@ -58,7 +59,8 @@ class MovingAverageCrossingOverStrategy:
             if not active_positions:
                 position = mt5_api.place_trade(self.symbol, self.lot, "sell")
             elif active_positions[0].type == 0:
-                mt5_api.close_all_position()
+                current_position = mt5_api.positions_get(symbol=self.symbol)
+                mt5_api.close_position(current_position)
                 position = mt5_api.place_trade(self.symbol, self.lot, "sell")
         return position
 
@@ -70,7 +72,6 @@ class RSIStrategy:
         self.lot = lot
         self.overbought = overbought
         self.oversold = oversold
-
 
     def check_signal(self):
         mt5_api.initialize()
@@ -91,7 +92,8 @@ class RSIStrategy:
                 position = mt5_api.place_trade(self.symbol, self.lot, "buy")
 
             elif active_positions[0].type == 1:
-                mt5_api.close_all_position()
+                current_position = mt5_api.positions_get(symbol=self.symbol)
+                mt5_api.close_position(current_position)
                 position = mt5_api.place_trade(self.symbol, self.lot, "buy")
 
         elif signal == "sell":
@@ -99,6 +101,7 @@ class RSIStrategy:
             if not active_positions:
                 position = mt5_api.place_trade(self.symbol, self.lot, "sell")
             elif active_positions[0].type == 0:
-                mt5_api.close_all_position()
+                current_position = mt5_api.positions_get(symbol=self.symbol)
+                mt5_api.close_position(current_position)
                 position = mt5_api.place_trade(self.symbol, self.lot, "sell")
         return position
