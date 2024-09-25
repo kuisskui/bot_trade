@@ -7,16 +7,16 @@ class BotManager:
             self.bots = []
         self.bots = bots
 
-    def create_new_bot(self, bot_id=None):
+    def create_new_bot(self, strategy, bot_id=None):
         if bot_id is None:
-            gen_id = len(self.bots)
-            self.create_new_bot(gen_id)
+            bot_id = len(self.bots)
 
-        if bot_id in [bot.bot_id for bot in self.bots]:
+        while True:
+            if bot_id not in [bot.bot_id for bot in self.bots]:
+                break
             bot_id += 1
-            self.create_new_bot(bot_id)
 
-        bot = Bot(bot_id)
+        bot = Bot(bot_id, strategy)
         self.bots.append(bot)
 
         return bot
