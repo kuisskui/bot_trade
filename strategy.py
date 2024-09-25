@@ -1,74 +1,21 @@
 import mt5_api
-from exception import *
 from indicator import get_moving_average, get_relative_strength_index
-from apscheduler.schedulers.asyncio import AsyncIOScheduler
-from apscheduler.triggers.cron import CronTrigger
-from apscheduler.triggers.interval import IntervalTrigger
-from datetime import datetime
 
 
 class MovingAverageCrossingOverStrategy:
-    def __init__(self):
-        pass
-
-    def check_signal(self):
-        pass
-
-    def send_order(self, order):
-        pass
-
-
-class Strategy:
-    def __init__(self):
-        self.scheduler = AsyncIOScheduler()
+    def __init__(self, symbol, time_frame, lot, short_period, long_period):
+        self.symbol = symbol
+        self.time_frame = time_frame
+        self.lot = lot
+        self.short_period = short_period
+        self.long_period = long_period
         self.previous_short_ma = None
         self.previous_long_ma = None
 
-    def start(self):
-        self.initialize()
-        symbol = "EURUSD"
-        timeframe = mt5_api.TIMEFRAME_M5
-        lot = 0.1
-        short_period = 5
-        long_period = 20
-        trigger = CronTrigger(second=0)
-        trigger_m5 = CronTrigger(minute='*/5', second=0)
-
-        trigger_debug = IntervalTrigger(seconds=3)
-
-        self.ma_crossing_trade(symbol, timeframe, lot, short_period, long_period)
-        self.scheduler.start()
-        self.scheduler.add_job(
-            self.ma_crossing_trade,
-            kwargs={
-                "symbol": symbol,
-                "time_frame": timeframe,
-                "lot": lot,
-                "short_period": short_period,
-                "long_period": long_period,
-            },
-            trigger=trigger_m5
-        )
-        print("schedule start")
-
-    def stop(self):
-        self.scheduler.shutdown()
-        self.shutdown()
-
-    def initialize(self):
-        if not mt5_api.initialize():
-            raise InitializationException('mt5_api initialization failed')
-
-    def shutdown(self):
-        mt5_api.shutdown()
-
-    def ma_crossing_trade(self, symbol, time_frame, lot, short_period, long_period):
-        self.initialize()
-
-        print(f"-----KuiBot: trade is called: [{datetime.now()}]-----")
-
-        current_short_ma = get_moving_average(symbol, time_frame, short_period)
-        current_long_ma = get_moving_average(symbol, time_frame, long_period)
+    def check_signal(self):
+        mt5_api.initialize()
+        current_short_ma = get_moving_average(self.symbol, self.time_frame, self.short_period)
+        current_long_ma = get_moving_average(self.symbol, self.time_frame, self.long_period)
 
         # If this is the first run, store the MAs and return (no crossover check yet)
         if self.previous_short_ma is None or self.previous_long_ma is None:
@@ -80,49 +27,78 @@ class Strategy:
         crossed_up = self.previous_short_ma <= self.previous_long_ma and current_short_ma > current_long_ma
         crossed_down = self.previous_short_ma >= self.previous_long_ma and current_short_ma < current_long_ma
 
-        print(f"MA crossing check: crossed_up={crossed_up}, crossed_down={crossed_down}")
-        is_uptrend = current_short_ma > current_long_ma
-        if is_uptrend:
-            print("Current trend: UP")
-        else:
-            print("Current trend: DOWN")
+        # print(f"MA crossing check: crossed_up={crossed_up}, crossed_down={crossed_down}")
 
         if crossed_up:
-            # Bullish crossover: Buy signal
-            print("Bullish crossover detected (Buy signal)")
-            active_positions = mt5_api.positions_get(symbol=symbol)
-            if not active_positions:
-                mt5_api.place_trade(symbol, lot, "buy", deviation=100)
-
-            elif active_positions[0].type == 1:
-                mt5_api.close_all_position()
-                mt5_api.place_trade(symbol, lot, "buy", deviation=100)
+            signal = "buy"
 
         elif crossed_down:
-            # Bearish crossover: Sell signal
-            print("Bearish crossover detected (Sell signal)")
-            active_positions = mt5_api.positions_get(symbol=symbol)
-            if not active_positions:
-                mt5_api.place_trade(symbol, lot, "sell", deviation=100)
-            elif active_positions[0].type == 0:
-                mt5_api.close_all_position()
-                mt5_api.place_trade(symbol, lot, "sell", deviation=100)
+            signal = "sell"
+        else:
+            signal = "hold"
 
         self.previous_short_ma = current_short_ma
         self.previous_long_ma = current_long_ma
 
-        self.shutdown()
+        return signal
 
-    def rsi_trade(self, symbol, time_frame, lot, overbought, oversold):
-        self.initialize()
-        print(f"-----KuiBot: trade is called: [{datetime.now()}]-----")
-        rsi = get_relative_strength_index(symbol, time_frame)
-        print(f"RSI percentage: {rsi}%")
-        if rsi > overbought:
-            print("RSI is overbought")
-            mt5_api.place_trade(symbol, lot, "sell", deviation=100)
-        if rsi < oversold:
-            print("RSI is oversold")
-            mt5_api.place_trade(symbol, lot, "buy", deviation=100)
-        self.shutdown()
+    def send_order(self, signal, positions):
+        global position
+        if signal == "buy":
+            active_positions = mt5_api.positions_get(symbol=self.symbol)
+            if not active_positions:
+                position = mt5_api.place_trade(self.symbol, self.lot, "buy")
 
+            elif active_positions[0].type == 1:
+                mt5_api.close_all_position()
+                position = mt5_api.place_trade(self.symbol, self.lot, "buy")
+
+        elif signal == "sell":
+            active_positions = mt5_api.positions_get(symbol=self.symbol)
+            if not active_positions:
+                position = mt5_api.place_trade(self.symbol, self.lot, "sell")
+            elif active_positions[0].type == 0:
+                mt5_api.close_all_position()
+                position = mt5_api.place_trade(self.symbol, self.lot, "sell")
+        return position
+
+
+class RSIStrategy:
+    def __init__(self, symbol, time_frame, lot, overbought, oversold):
+        self.symbol = symbol
+        self.time_frame = time_frame
+        self.lot = lot
+        self.overbought = overbought
+        self.oversold = oversold
+
+
+    def check_signal(self):
+        mt5_api.initialize()
+        rsi = get_relative_strength_index(self.symbol, self.time_frame)
+        if rsi > self.overbought:
+            signal = "sell"
+        elif rsi < self.oversold:
+            signal = "buy"
+        else:
+            signal = "hold"
+        return signal
+
+    def send_order(self, signal, positions):
+        global position
+        if signal == "buy":
+            active_positions = mt5_api.positions_get(symbol=self.symbol)
+            if not active_positions:
+                position = mt5_api.place_trade(self.symbol, self.lot, "buy")
+
+            elif active_positions[0].type == 1:
+                mt5_api.close_all_position()
+                position = mt5_api.place_trade(self.symbol, self.lot, "buy")
+
+        elif signal == "sell":
+            active_positions = mt5_api.positions_get(symbol=self.symbol)
+            if not active_positions:
+                position = mt5_api.place_trade(self.symbol, self.lot, "sell")
+            elif active_positions[0].type == 0:
+                mt5_api.close_all_position()
+                position = mt5_api.place_trade(self.symbol, self.lot, "sell")
+        return position
