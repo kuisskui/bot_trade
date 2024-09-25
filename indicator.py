@@ -50,4 +50,5 @@ def get_relative_strength_index(symbol, timeframe, shift=0, period=14):
     # Calculate the RSI
     df['rsi'] = 100 - (100 / (1 + rs))
 
-    return 100 - (100 / (1 + rs))
+    # Return the last RSI value as an integer
+    return int(df['rsi'].iloc[-1])

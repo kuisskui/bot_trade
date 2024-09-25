@@ -42,15 +42,14 @@ class MovingAverageCrossingOverStrategy:
         return signal
 
     def send_order(self, signal, positions):
-        global position
+        position = None
         if signal == "buy":
             active_positions = mt5_api.positions_get(symbol=self.symbol)
             if not active_positions:
                 position = mt5_api.place_trade(self.symbol, self.lot, "buy")
 
             elif active_positions[0].type == 1:
-                current_position = mt5_api.positions_get(symbol=self.symbol)
-                mt5_api.close_position(current_position)
+                mt5_api.close_position(active_positions)
                 position = mt5_api.place_trade(self.symbol, self.lot, "buy")
 
         elif signal == "sell":
@@ -58,8 +57,7 @@ class MovingAverageCrossingOverStrategy:
             if not active_positions:
                 position = mt5_api.place_trade(self.symbol, self.lot, "sell")
             elif active_positions[0].type == 0:
-                current_position = mt5_api.positions_get(symbol=self.symbol)
-                mt5_api.close_position(current_position)
+                mt5_api.close_position(active_positions)
                 position = mt5_api.place_trade(self.symbol, self.lot, "sell")
         return position
 
@@ -84,15 +82,14 @@ class RSIStrategy:
         return signal
 
     def send_order(self, signal, positions):
-        global position
+        position = None
         if signal == "buy":
             active_positions = mt5_api.positions_get(symbol=self.symbol)
             if not active_positions:
                 position = mt5_api.place_trade(self.symbol, self.lot, "buy")
 
             elif active_positions[0].type == 1:
-                current_position = mt5_api.positions_get(symbol=self.symbol)
-                mt5_api.close_position(current_position)
+                mt5_api.close_position(active_positions)
                 position = mt5_api.place_trade(self.symbol, self.lot, "buy")
 
         elif signal == "sell":
@@ -100,7 +97,6 @@ class RSIStrategy:
             if not active_positions:
                 position = mt5_api.place_trade(self.symbol, self.lot, "sell")
             elif active_positions[0].type == 0:
-                current_position = mt5_api.positions_get(symbol=self.symbol)
-                mt5_api.close_position(current_position)
+                mt5_api.close_position(active_positions)
                 position = mt5_api.place_trade(self.symbol, self.lot, "sell")
         return position
