@@ -20,7 +20,7 @@ class Bot:
             self.positions.remove(position)
 
     def check_signal(self):
-        return self.strategy.check_signal()
+        return self.strategy.check_signal(self.positions)
 
     def send_order(self, signal):
-        return self.strategy.send_order(signal)
+        return self.strategy.send_order(signal, self.positions)
