@@ -248,14 +248,14 @@ def place_trade(symbol, volume, trade_type, sl=0.0, tp=0.0, deviation=20, magic=
     return order_send(request)
 
 
-def close_all_orders():
+def close_all_position():
     positions = positions_get()
 
     for position in positions:
-        close_order(position)
+        close_position(position)
 
 
-def close_order(position):
+def close_position(position):
     symbol = position.symbol
     volume = position.volume
     position_type = position.type

@@ -84,7 +84,7 @@ class Strategy:
                 mt5_api.place_trade(symbol, lot, "buy", deviation=100)
 
             elif active_positions[0].type == 1:
-                mt5_api.close_all_orders()
+                mt5_api.close_all_position()
                 mt5_api.place_trade(symbol, lot, "buy", deviation=100)
 
         elif crossed_down:
@@ -94,7 +94,7 @@ class Strategy:
             if not active_positions:
                 mt5_api.place_trade(symbol, lot, "sell", deviation=100)
             elif active_positions[0].type == 0:
-                mt5_api.close_all_orders()
+                mt5_api.close_all_position()
                 mt5_api.place_trade(symbol, lot, "sell", deviation=100)
 
         self.previous_short_ma = current_short_ma
