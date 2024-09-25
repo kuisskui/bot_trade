@@ -7,6 +7,17 @@ from apscheduler.triggers.interval import IntervalTrigger
 from datetime import datetime
 
 
+class MovingAverageCrossingOverStrategy:
+    def __init__(self):
+        pass
+
+    def check_signal(self):
+        pass
+
+    def send_order(self, order):
+        pass
+
+
 class Strategy:
     def __init__(self):
         self.scheduler = AsyncIOScheduler()

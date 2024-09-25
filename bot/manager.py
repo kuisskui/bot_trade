@@ -30,3 +30,4 @@ class BotManager:
     def stop(self):
         for bot in self.bots:
             bot.stop()
+            self.bots.remove(bot)

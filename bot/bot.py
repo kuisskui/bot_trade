@@ -2,21 +2,25 @@ import mt5_api as mt5
 
 
 class Bot:
-    def __init__(self, bot_id):
+    def __init__(self, bot_id, strategy):
         self.bot_id: int = bot_id
+        self.strategy = strategy
         self.positions = []
-        self.strategy
 
     def trade(self):
-        self.check_signal()
-        self.send_order()
+        signal = self.check_signal()
+        position = self.send_order(signal)
+
+        if position:
+            self.positions.append(position)
 
     def stop_trade(self):
         for position in self.positions:
             mt5.close_position(position)
+            self.positions.remove(position)
 
     def check_signal(self):
-        pass
+        return self.strategy.check_signal()
 
-    def send_order(self):
-        pass
+    def send_order(self, signal):
+        return self.strategy.send_order(signal)
