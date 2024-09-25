@@ -8,18 +8,18 @@ class Bot:
         self.bot_id: int = bot_id
         self.strategy = strategy
         self.positions = []
-
-    def __getattribute__(self, name):
-        object.__getattribute__(self, "trigger_function")()
-        self.update_position()
-        return object.__getattribute__(self, name)
+    #
+    # def __getattribute__(self, name):
+    #     self.update_position()
+    #
+    #     return super().__getattribute__(name)
 
     def update_position(self):
         for i in range(len(self.positions)):
             self.positions[i] = mt5.positions_get(ticket=self.positions[i].ticket)
 
     def trade(self):
-        print(f"Bot: I am trading with {self.strategy}:{datetime.datetime.now()}")
+        print(f"Bot: I am trading with {self.strategy}:{datetime.now()}")
         signal = self.check_signal()
         print(f"check for signal: {signal}")
         position = self.send_order(signal)

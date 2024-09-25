@@ -5,7 +5,8 @@ class BotManager:
     def __init__(self, bots: list[Bot] = None):
         if bots is None:
             self.bots = []
-        self.bots = bots
+        else:
+            self.bots = bots
 
     def create_new_bot(self, strategy):
         bot_id = 1
@@ -27,5 +28,5 @@ class BotManager:
 
     def stop(self):
         for bot in self.bots:
-            bot.stop()
+            bot.stop_trade()
             self.bots.remove(bot)
