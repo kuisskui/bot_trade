@@ -7,6 +7,15 @@ class Bot:
         self.strategy = strategy
         self.positions = []
 
+    def __getattribute__(self, name):
+        object.__getattribute__(self, "trigger_function")()
+        self.update_position()
+        return object.__getattribute__(self, name)
+
+    def update_position(self):
+        for i in range(len(self.positions)):
+            self.positions[i] = mt5.positions_get(ticket=self.positions[i].ticket)
+
     def trade(self):
         signal = self.check_signal()
         position = self.send_order(signal)
