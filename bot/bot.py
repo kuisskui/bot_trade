@@ -9,7 +9,7 @@ class Bot:
 
     def trade(self):
         self.check_signal()
-        self.trade()
+        self.send_order()
 
     def stop_trade(self):
         for position in self.positions:
