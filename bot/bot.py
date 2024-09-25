@@ -1,3 +1,5 @@
+from datetime import datetime
+
 import mt5_api as mt5
 
 
@@ -17,10 +19,13 @@ class Bot:
             self.positions[i] = mt5.positions_get(ticket=self.positions[i].ticket)
 
     def trade(self):
+        print(f"Bot: I am trading with {self.strategy}:{datetime.datetime.now()}")
         signal = self.check_signal()
+        print(f"check for signal: {signal}")
         position = self.send_order(signal)
 
         if position:
+            print(f"opened position: {position}")
             self.positions.append(position)
 
     def stop_trade(self):
