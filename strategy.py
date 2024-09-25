@@ -12,7 +12,7 @@ class MovingAverageCrossingOverStrategy:
         self.previous_short_ma = None
         self.previous_long_ma = None
 
-    def check_signal(self):
+    def check_signal(self, positions):
         mt5_api.initialize()
         current_short_ma = get_moving_average(self.symbol, self.time_frame, self.short_period)
         current_long_ma = get_moving_average(self.symbol, self.time_frame, self.long_period)
@@ -72,7 +72,7 @@ class RSIStrategy:
         self.overbought = overbought
         self.oversold = oversold
 
-    def check_signal(self):
+    def check_signal(self, positions):
         mt5_api.initialize()
         rsi = get_relative_strength_index(self.symbol, self.time_frame)
         if rsi > self.overbought:
