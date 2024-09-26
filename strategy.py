@@ -21,7 +21,7 @@ class MovingAverageCrossingOverStrategy:
         if self.previous_short_ma is None or self.previous_long_ma is None:
             self.previous_short_ma = current_short_ma
             self.previous_long_ma = current_long_ma
-            return True
+            return "hold"
 
         crossed_up = self.previous_short_ma <= self.previous_long_ma and current_short_ma > current_long_ma
         crossed_down = self.previous_short_ma >= self.previous_long_ma and current_short_ma < current_long_ma
