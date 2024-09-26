@@ -1,4 +1,5 @@
 import mt5_api
+from datetime import datetime
 from indicator import get_moving_average, get_relative_strength_index
 
 
@@ -26,7 +27,7 @@ class MovingAverageCrossingOverStrategy:
         crossed_up = self.previous_short_ma <= self.previous_long_ma and current_short_ma > current_long_ma
         crossed_down = self.previous_short_ma >= self.previous_long_ma and current_short_ma < current_long_ma
 
-        print(f"MA crossing check: crossed_up={crossed_up}, crossed_down={crossed_down}")
+        print(f"[{datetime.now()}] :: {type(self).__name__} : MA crossing check: crossed_up={crossed_up}, crossed_down={crossed_down}")
 
         if crossed_up:
             signal = "buy"
@@ -73,7 +74,7 @@ class RSIStrategy:
         global signal
         mt5_api.initialize()
         rsi = get_relative_strength_index(self.symbol, self.time_frame)
-        print(f"RSI for now: {rsi}")
+        print(f"[{datetime.now()}] :: {type(self).__name__} : RSI for now: {rsi}")
         active_positions = mt5_api.positions_get(symbol=self.symbol)
         if active_positions:
             if active_positions[0].type == 1:
