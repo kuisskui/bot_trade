@@ -44,7 +44,7 @@ class MovingAverageCrossingOverStrategy:
     def send_order(self, signal, positions):
         position = None
         if signal == "buy":
-            active_positions = mt5_api.positions_get(symbol=self.symbol)
+            active_positions = mt5_api.positions_get(symbol=self.symbol)[0]
             if not active_positions:
                 position = mt5_api.place_trade(self.symbol, self.lot, "buy")
 
@@ -53,7 +53,7 @@ class MovingAverageCrossingOverStrategy:
                 position = mt5_api.place_trade(self.symbol, self.lot, "buy")
 
         elif signal == "sell":
-            active_positions = mt5_api.positions_get(symbol=self.symbol)
+            active_positions = mt5_api.positions_get(symbol=self.symbol)[0]
             if not active_positions:
                 position = mt5_api.place_trade(self.symbol, self.lot, "sell")
             elif active_positions[0].type == 0:
@@ -84,7 +84,7 @@ class RSIStrategy:
     def send_order(self, signal, positions):
         position = None
         if signal == "buy":
-            active_positions = mt5_api.positions_get(symbol=self.symbol)
+            active_positions = mt5_api.positions_get(symbol=self.symbol)[0]
             if not active_positions:
                 position = mt5_api.place_trade(self.symbol, self.lot, "buy")
 
@@ -93,7 +93,7 @@ class RSIStrategy:
                 position = mt5_api.place_trade(self.symbol, self.lot, "buy")
 
         elif signal == "sell":
-            active_positions = mt5_api.positions_get(symbol=self.symbol)
+            active_positions = mt5_api.positions_get(symbol=self.symbol)[0]
             if not active_positions:
                 position = mt5_api.place_trade(self.symbol, self.lot, "sell")
             elif active_positions[0].type == 0:
