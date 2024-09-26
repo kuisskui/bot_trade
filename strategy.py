@@ -80,11 +80,13 @@ class RSIStrategy:
             if active_positions[0].type == 1:
                 if rsi <= 50:
                     signal = "exit"
-                signal = "hold"
+                else:
+                    signal = "hold"
             elif active_positions[0].type == 0:
                 if rsi >= 50:
                     signal = "exit"
-                signal = "hold"
+                else:
+                    signal = "hold"
             else:
                 signal = "hold"
             return signal
