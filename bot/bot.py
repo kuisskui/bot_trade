@@ -19,13 +19,13 @@ class Bot:
             self.positions[i] = mt5.positions_get(ticket=self.positions[i].ticket)
 
     def trade(self):
-        print(f"Bot: I am trading with {self.strategy}:{datetime.now()}")
+        print(f"[{datetime.now()}] :: Bot: I am trading using {type(self.strategy).__name__}")
         signal = self.check_signal()
-        print(f"check for signal: {signal}")
+        print(f"[{datetime.now()}] :: Strategy: {type(self.strategy).__name__}: check for signal: {signal}")
         position = self.send_order(signal)
 
         if position:
-            print(f"opened position: {position}")
+            print(f"[{datetime.now()}] :: Strategy: {type(self.strategy).__name__} opened position: {position}")
             self.positions.append(position)
 
     def stop_trade(self):

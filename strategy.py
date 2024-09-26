@@ -26,7 +26,7 @@ class MovingAverageCrossingOverStrategy:
         crossed_up = self.previous_short_ma <= self.previous_long_ma and current_short_ma > current_long_ma
         crossed_down = self.previous_short_ma >= self.previous_long_ma and current_short_ma < current_long_ma
 
-        # print(f"MA crossing check: crossed_up={crossed_up}, crossed_down={crossed_down}")
+        print(f"MA crossing check: crossed_up={crossed_up}, crossed_down={crossed_down}")
 
         if crossed_up:
             signal = "buy"
@@ -48,14 +48,14 @@ class MovingAverageCrossingOverStrategy:
                 position = mt5_api.place_trade(self.symbol, self.lot, "buy")
 
             elif active_positions[0].type == 1:
-                mt5_api.close_position(active_positions)
+                mt5_api.close_position(active_positions[0])
                 position = mt5_api.place_trade(self.symbol, self.lot, "buy")
 
         elif signal == "sell":
             if not active_positions:
                 position = mt5_api.place_trade(self.symbol, self.lot, "sell")
             elif active_positions[0].type == 0:
-                mt5_api.close_position(active_positions)
+                mt5_api.close_position(active_positions[0])
                 position = mt5_api.place_trade(self.symbol, self.lot, "sell")
         return position
 
@@ -73,14 +73,17 @@ class RSIStrategy:
         global signal
         mt5_api.initialize()
         rsi = get_relative_strength_index(self.symbol, self.time_frame)
+        print(f"RSI for now: {rsi}")
         active_positions = mt5_api.positions_get(symbol=self.symbol)
         if active_positions:
             if active_positions[0].type == 1:
                 if rsi <= 50:
                     signal = "exit"
+                signal = "hold"
             elif active_positions[0].type == 0:
                 if rsi >= 50:
                     signal = "exit"
+                signal = "hold"
             else:
                 signal = "hold"
             return signal
@@ -101,17 +104,28 @@ class RSIStrategy:
                 position = mt5_api.place_trade(self.symbol, self.lot, "buy")
 
             elif active_positions[0].type == 1:
-                mt5_api.close_position(active_positions)
+                mt5_api.close_position(active_positions[0])
                 position = mt5_api.place_trade(self.symbol, self.lot, "buy")
 
         elif signal == "sell":
             if not active_positions:
                 position = mt5_api.place_trade(self.symbol, self.lot, "sell")
             elif active_positions[0].type == 0:
-                mt5_api.close_position(active_positions)
+                mt5_api.close_position(active_positions[0])
                 position = mt5_api.place_trade(self.symbol, self.lot, "sell")
 
         elif signal == "exit":
             if active_positions:
-                mt5_api.close_position(active_positions)
+                mt5_api.close_position(active_positions[0])
         return position
+
+
+class NoAnalyzeStrategy:
+    def __init__(self, symbol, time_frame, lot, point):
+        pass
+
+    def check_signal(self, positions):
+        pass
+
+    def send_order(self, signal, positions):
+        pass
