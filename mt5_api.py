@@ -79,35 +79,35 @@ def symbol_select(symbol, enable=None):
 
 def copy_rates_from(symbol, timeframe, date_from, count):
     arr = mt.copy_rates_from(symbol, timeframe, date_from, count)
-    if arr is None:
+    if arr is None or len(arr) == 0:
         raise Exception(f"Failed to get copy rates from {symbol}: {last_error()}")
     return arr
 
 
 def copy_rates_from_pos(symbol, timeframe, shift, period):
     arr = mt.copy_rates_from_pos(symbol, timeframe, shift, period)
-    if arr is None:
+    if arr is None or len(arr) == 0:
         raise Exception(f"Failed to get copy rates from pos {symbol}: {last_error()}")
     return arr
 
 
 def copy_rates_range(symbol, timeframe, date_from, date_to):
     arr = mt.copy_rates_range(symbol, timeframe, date_from, date_to)
-    if arr is None:
+    if arr is None or len(arr) == 0:
         raise Exception(f"Failed to get copy rates range {symbol}: {last_error()}")
     return arr
 
 
 def copy_ticks_from(symbol, date_from, count, flags):
     arr = mt.copy_ticks_from(symbol, date_from, count, flags)
-    if arr is None:
+    if arr is None or len(arr) == 0:
         raise Exception(f"Failed to get copy ticks from {symbol}: {last_error()}")
     return arr
 
 
 def copy_ticks_range(symbol, date_from, date_to, flags):
     arr = mt.copy_ticks_range(symbol, date_from, date_to, flags)
-    if arr is None:
+    if arr is None or len(arr) == 0:
         raise Exception(f"Failed to get copy ticks range {symbol}: {last_error()}")
     return arr
 

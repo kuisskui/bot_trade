@@ -5,15 +5,8 @@ import pandas as pd
 
 
 def get_moving_average(symbol, timeframe, shift, period):
-    # Fetch historical price data from MetaTrader 5
     rates = copy_rates_from_pos(symbol, timeframe, shift, period + shift)
 
-    # Check if the data is valid
-    if rates is None or len(rates) == 0:
-        print(f"Failed to retrieve historical data for {symbol}")
-        return None
-
-    # Convert rates to a Pandas DataFrame for easier manipulation
     data = pd.DataFrame(rates)
     data['time'] = pd.to_datetime(data['time'], unit='s')
 
@@ -23,10 +16,8 @@ def get_moving_average(symbol, timeframe, shift, period):
 
 
 def get_exponential_moving_average(symbol, timeframe, shift, period):
-    # Fetch historical price data from MetaTrader 5
     rates = copy_rates_from_pos(symbol, timeframe, shift, period + shift)
 
-    # Convert rates to a Pandas DataFrame for easier manipulation
     data = pd.DataFrame(rates)
     data['time'] = pd.to_datetime(data['time'], unit='s')
 
@@ -36,17 +27,13 @@ def get_exponential_moving_average(symbol, timeframe, shift, period):
     return ema
 
 
-def get_relative_strength_index(symbol, timeframe, shift=0, period=14):
-    # Get historical data
-    rates = copy_rates_from_pos(symbol, timeframe, shift, period)
-    if rates is None or len(rates) == 0:
-        print(f"Failed to retrieve historical data for {symbol}")
-        return None
+def get_relative_strength_index(symbol, timeframe, shift, period):
+    rates = copy_rates_from_pos(symbol, timeframe, shift, period + shift)
 
-    df = pd.DataFrame(rates)
-    df['time'] = pd.to_datetime(df['time'], unit='s')
+    data = pd.DataFrame(rates)
+    data['time'] = pd.to_datetime(data['time'], unit='s')
 
-    delta = df['close'].diff()
+    delta = data['close'].diff()
 
     gain = delta.where(delta > 0, 0)
     loss = -delta.where(delta < 0, 0)
@@ -56,34 +43,25 @@ def get_relative_strength_index(symbol, timeframe, shift=0, period=14):
 
     rs = avg_gain / avg_loss
 
-    # Calculate the RSI
-    df['rsi'] = 100 - (100 / (1 + rs))
+    data['rsi'] = 100 - (100 / (1 + rs))
 
-    # Return the last RSI value as an integer
-    return int(df['rsi'].iloc[-1])
+    return data['rsi'].iloc[-1]
 
 
-def get_bollinger_bands(symbol, timeframe, period=20, std_dev=2):
-    # Get historical rates for the symbol
-    rates = copy_rates_from_pos(symbol, timeframe, 0, period + 100)
+def get_bollinger_bands(symbol, timeframe, shift, period, std_dev):
+    rates = copy_rates_from_pos(symbol, timeframe, shift, period + shift)
 
-    # Convert rates to a DataFrame for easier manipulation
     data = pd.DataFrame(rates)
     data['time'] = pd.to_datetime(data['time'], unit='s')
 
-    # Calculate the Middle Band (SMA)
-    data['SMA'] = data['close'].rolling(window=period).mean()
+    data['sma'] = data['close'].rolling(window=period).mean()
+    data['std'] = data['close'].rolling(window=period).std()
 
-    # Calculate the standard deviation
-    data['STD'] = data['close'].rolling(window=period).std()
+    data['upper_band'] = data['sma'] + (data['std'] * std_dev)
+    data['lower_band'] = data['sma'] - (data['std'] * std_dev)
 
-    # Calculate Upper and Lower Bands
-    data['Upper_Band'] = data['SMA'] + (data['STD'] * std_dev)
-    data['Lower_Band'] = data['SMA'] - (data['STD'] * std_dev)
-
-    # Return the latest Bollinger Band values
     latest_data = data.iloc[-1]
-    return latest_data['Upper_Band'], latest_data['Lower_Band'], latest_data['SMA']
+    return latest_data['upper_band'], latest_data['lower_band'], latest_data['sma']
 
 
 def get_ema(data, period):
@@ -91,26 +69,19 @@ def get_ema(data, period):
     return data.ewm(span=period, adjust=False).mean()
 
 
-def get_moving_average_convergence_divergence(symbol, timeframe, short_period=12, long_period=26, signal_period=9):
-    # Fetch historical data for the symbol
-    rates = copy_rates_from_pos(symbol, timeframe, 0, long_period + signal_period + 100)
-    # Convert the historical data into a Pandas DataFrame
+def get_moving_average_convergence_divergence(symbol, timeframe, shift, short_period=12, long_period=26, signal_period=9):
+    rates = copy_rates_from_pos(symbol, timeframe, shift, long_period + shift)
     data = pd.DataFrame(rates)
     data['time'] = pd.to_datetime(data['time'], unit='s')
 
-    # Calculate the short-term EMA (12 periods) and long-term EMA (26 periods)
-    data['EMA_12'] = get_ema(data['close'], short_period)
-    data['EMA_26'] = get_ema(data['close'], long_period)
+    data['short_ema'] = get_ema(data['close'], short_period)
+    data['long_ema'] = get_ema(data['close'], long_period)
 
-    # Calculate the MACD line (EMA_12 - EMA_26)
-    data['MACD_Line'] = data['EMA_12'] - data['EMA_26']
+    data['macd_line'] = data['short_ema'] - data['long_ema']
+    data['signal_line'] = get_ema(data['macd_line'], signal_period)
 
-    # Calculate the Signal Line (9-period EMA of MACD Line)
-    data['Signal_Line'] = get_ema(data['MACD_Line'], signal_period)
-
-    # Calculate the MACD Histogram (MACD Line - Signal Line)
-    data['MACD_Histogram'] = data['MACD_Line'] - data['Signal_Line']
+    data['macd_histogram'] = data['macd_line'] - data['signal_line']
 
     # Return the latest MACD line, Signal line, and MACD histogram values
     latest_data = data.iloc[-1]
-    return latest_data['MACD_Line'], latest_data['Signal_Line'], latest_data['MACD_Histogram']
+    return latest_data['macd_line'], latest_data['signal_line'], latest_data['macd_histogram']

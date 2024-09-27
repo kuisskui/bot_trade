@@ -15,8 +15,8 @@ class MovingAverageCrossingOverStrategy:
 
     def check_signal(self, positions):
         mt5_api.initialize()
-        current_short_ma = get_moving_average(self.symbol, self.time_frame, self.short_period)
-        current_long_ma = get_moving_average(self.symbol, self.time_frame, self.long_period)
+        current_short_ma = get_moving_average(self.symbol, self.time_frame, 0, self.short_period)
+        current_long_ma = get_moving_average(self.symbol, self.time_frame, 0,  self.long_period)
 
         # If this is the first run, store the MAs and return (no crossover check yet)
         if self.previous_short_ma is None or self.previous_long_ma is None:

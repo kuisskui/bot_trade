@@ -15,7 +15,7 @@ class RSIStrategy:
         # this strategy might check and return hold until the port is broken if the market is dum to a way
         global signal
         mt5_api.initialize()
-        rsi = get_relative_strength_index(self.symbol, self.time_frame)
+        rsi = get_relative_strength_index(self.symbol, self.time_frame, 0, 14)
         print(f"[{datetime.now()}] :: {type(self).__name__} : RSI for now: {rsi}")
         active_positions = mt5_api.positions_get(symbol=self.symbol)
         if active_positions:

@@ -1,6 +1,6 @@
 import mt5_api
 from datetime import datetime
-from indicator import get_moving_average
+from indicator import get_moving_average, get_moving_average_convergence_divergence
 
 
 class MACDStrategy:
@@ -14,7 +14,7 @@ class MACDStrategy:
 
     def check_signal(self, positions):
         mt5_api.initialize()
-        macd_line, signal_line = get_macd(self.symbol, self.time_frame, self.short_period, self.long_period, self.signal_period)
+        macd_line, signal_line = get_moving_average_convergence_divergence(self.symbol, self.time_frame,0, self.short_period, self.long_period, self.signal_period)
 
         if macd_line > signal_line:
             return "buy"
