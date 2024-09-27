@@ -46,7 +46,7 @@ async def trade_ema():
     bot = bot_manager.create_new_bot(ExponentialMovingAverageCrossingOverStrategy("BTCUSD"))
     bot.trade()
     scheduler.add_job(
-        bot.trade(),
+        bot.trade,
         trigger=CronTrigger(second=0)
     )
 
