@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from PythonMetaTrader5 import *
 from strategy import MovingAverageCrossingOverStrategy, RSIStrategy
 from dotenv import load_dotenv
-from bot.manager import BotManager
+from bot.bot_manager import BotManager
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.triggers.cron import CronTrigger
 

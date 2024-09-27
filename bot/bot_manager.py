@@ -1,8 +1,8 @@
-from .bot import Bot
+from bot.bot_trade import BotTrade
 
 
 class BotManager:
-    def __init__(self, bots: list[Bot] = None):
+    def __init__(self, bots: list[BotTrade] = None):
         if bots is None:
             self.bots = []
         else:
@@ -15,7 +15,7 @@ class BotManager:
                 break
             bot_id += 1
 
-        bot = Bot(bot_id, strategy)
+        bot = BotTrade(bot_id, strategy)
         self.bots.append(bot)
 
         return bot
