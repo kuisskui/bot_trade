@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from PythonMetaTrader5 import *
-from strategy import MovingAverageCrossingOverStrategy, RSIStrategy
+from strategy import MovingAverageCrossingOverStrategy, RSIStrategy, ExponentialMovingAverageCrossingOverStrategy
 from dotenv import load_dotenv
 from bot.bot_manager import BotManager
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
@@ -32,22 +32,32 @@ def get_bots():
 
 @app.post(path="/bots/trade/ma")
 async def trade_ma():
-    bot = bot_manager.create_new_bot(MovingAverageCrossingOverStrategy("USOIL", TIMEFRAME_M5, 0.1, 5, 20))
+    bot = bot_manager.create_new_bot(MovingAverageCrossingOverStrategy("USOIL"))
     bot.trade()
     scheduler.add_job(
         bot.trade,
-        trigger=CronTrigger(minute="*/5", second=0)
+        trigger=CronTrigger(second=0)
     )
     return bot
 
 
+@app.post(path="/bots/trade/ema")
+async def trade_ema():
+    bot = bot_manager.create_new_bot(ExponentialMovingAverageCrossingOverStrategy("BTCUSD"))
+    bot.trade()
+    scheduler.add_job(
+        bot.trade(),
+        trigger=CronTrigger(second=0)
+    )
+
+
 @app.post(path="/bots/trade/rsi")
 async def trade_rsi():
-    bot = bot_manager.create_new_bot(RSIStrategy("EURUSD", TIMEFRAME_M5, 0.1, 70, 30))
+    bot = bot_manager.create_new_bot(RSIStrategy("EURUSD"))
     bot.trade()
     scheduler.add_job(
         bot.trade,
-        trigger=CronTrigger(minute="*/5", second=0)
+        trigger=CronTrigger(second=0)
     )
     return bot
 

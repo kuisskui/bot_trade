@@ -1,6 +1,6 @@
 import mt5_api
 from datetime import datetime
-from indicator import get_moving_average, get_moving_average_convergence_divergence
+from indicator import get_moving_average_convergence_divergence
 
 
 class MACDStrategy:

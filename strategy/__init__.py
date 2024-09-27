@@ -1,3 +1,3 @@
-from ma import MovingAverageCrossingOverStrategy
-from rsi import RSIStrategy
-import mt5_api
+from .ma import MovingAverageCrossingOverStrategy
+from .rsi import RSIStrategy
+from .ema import ExponentialMovingAverageCrossingOverStrategy

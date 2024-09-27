@@ -4,7 +4,7 @@ from indicator import get_relative_strength_index
 
 
 class RSIStrategy:
-    def __init__(self, symbol, time_frame, lot, overbought, oversold):
+    def __init__(self, symbol, time_frame=mt5_api.TIMEFRAME_M1, lot=0.1, overbought=70, oversold=30):
         self.symbol = symbol
         self.time_frame = time_frame
         self.lot = lot

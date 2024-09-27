@@ -1,9 +1,9 @@
 import mt5_api
 from datetime import datetime
-from indicator import get_moving_average
+from indicator import get_exponential_moving_average
 
 
-class MovingAverageCrossingOverStrategy:
+class ExponentialMovingAverageCrossingOverStrategy:
     def __init__(self, symbol, time_frame=mt5_api.TIMEFRAME_M1, lot=0.1, short_period=5, long_period=20):
         self.symbol = symbol
         self.time_frame = time_frame
@@ -15,8 +15,8 @@ class MovingAverageCrossingOverStrategy:
 
     def check_signal(self, positions):
         mt5_api.initialize()
-        current_short_ma = get_moving_average(symbol=self.symbol, timeframe=self.time_frame, shift=0, period=self.short_period)
-        current_long_ma = get_moving_average(symbol=self.symbol, timeframe=self.time_frame, shift=0,  period=self.long_period)
+        current_short_ma = get_exponential_moving_average(symbol=self.symbol, timeframe=self.time_frame, shift=0, period=self.short_period)
+        current_long_ma = get_exponential_moving_average(symbol=self.symbol, timeframe=self.time_frame, shift=0,  period=self.long_period)
 
         if self.previous_short_ma is None or self.previous_long_ma is None:
             self.previous_short_ma = current_short_ma
@@ -26,7 +26,7 @@ class MovingAverageCrossingOverStrategy:
         crossed_up = self.previous_short_ma <= self.previous_long_ma and current_short_ma > current_long_ma
         crossed_down = self.previous_short_ma >= self.previous_long_ma and current_short_ma < current_long_ma
 
-        print(f"[{datetime.now()}] :: {type(self).__name__} : MA crossing check: crossed_up={crossed_up}, crossed_down={crossed_down}")
+        print(f"[{datetime.now()}] :: {type(self).__name__} : EMA crossing check: crossed_up={crossed_up}, crossed_down={crossed_down}")
 
         if crossed_up:
             signal = "buy"
