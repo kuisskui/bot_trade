@@ -4,7 +4,7 @@ import MetaTrader5 as mt5
 import pandas as pd
 
 
-def get_moving_average(symbol, timeframe, shift=0, period=14):
+def get_moving_average(symbol, timeframe, shift, period):
     # Fetch historical price data from MetaTrader 5
     rates = copy_rates_from_pos(symbol, timeframe, shift, period + shift)
 
@@ -16,34 +16,19 @@ def get_moving_average(symbol, timeframe, shift=0, period=14):
     # Convert rates to a Pandas DataFrame for easier manipulation
     data = pd.DataFrame(rates)
     data['time'] = pd.to_datetime(data['time'], unit='s')
-
-    # Calculate the moving average on the 'close' prices
-    if len(data) < period:
-        print(f"Not enough data to calculate the moving average for {symbol}")
-        return None
 
     ma = data['close'].rolling(window=period).mean().iloc[-1 - shift]
 
     return ma
 
 
-def get_exponential_moving_average(symbol, timeframe, shift=0, period=14):
+def get_exponential_moving_average(symbol, timeframe, shift, period):
     # Fetch historical price data from MetaTrader 5
     rates = copy_rates_from_pos(symbol, timeframe, shift, period + shift)
-
-    # Check if the data is valid
-    if rates is None or len(rates) == 0:
-        print(f"Failed to retrieve historical data for {symbol}")
-        return None
 
     # Convert rates to a Pandas DataFrame for easier manipulation
     data = pd.DataFrame(rates)
     data['time'] = pd.to_datetime(data['time'], unit='s')
-
-    # Calculate the exponential moving average (EMA) on the 'close' prices
-    if len(data) < period:
-        print(f"Not enough data to calculate the moving average for {symbol}")
-        return None
 
     # Calculate EMA using the Pandas ewm() function
     ema = data['close'].ewm(span=period, adjust=False).mean().iloc[-1 - shift]
@@ -106,7 +91,7 @@ def get_ema(data, period):
     return data.ewm(span=period, adjust=False).mean()
 
 
-def get_macd(symbol, timeframe, short_period=12, long_period=26, signal_period=9):
+def get_moving_average_convergence_divergence(symbol, timeframe, short_period=12, long_period=26, signal_period=9):
     # Fetch historical data for the symbol
     rates = copy_rates_from_pos(symbol, timeframe, 0, long_period + signal_period + 100)
     # Convert the historical data into a Pandas DataFrame
