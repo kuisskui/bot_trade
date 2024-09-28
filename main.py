@@ -62,6 +62,11 @@ async def trade_rsi():
     return bot
 
 
+@app.post(path="/bots/backtest/ma")
+async def backtest_ma():
+    bot = bot_manager.create_new_bot(MovingAverageCrossingOverStrategy("EURUSD"))
+
+
 @app.on_event("shutdown")
 async def shutdown_event():
     scheduler.shutdown()

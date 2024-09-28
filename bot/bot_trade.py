@@ -8,7 +8,7 @@ class BotTrade:
         self.bot_id: int = bot_id
         self.strategy = strategy
         self.positions = []
-    #
+
     # def __getattribute__(self, name):
     #     self.update_position()
     #
