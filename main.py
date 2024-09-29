@@ -65,33 +65,20 @@ async def trade_test_rsi_major_pair():
     BTCUSD = bot_manager.create_new_bot(RSIStrategy("BTCUSD"))
     scheduler.add_job(
         BTCUSD.trade,
-        trigger=CronTrigger(second='*/5')
+        trigger=CronTrigger(second='*/5'),
+        replace_existing=True
     )
     BTCJPY = bot_manager.create_new_bot(RSIStrategy("BTCJPY"))
     scheduler.add_job(
         BTCJPY.trade,
-        trigger=CronTrigger(second='*/5')
+        trigger=CronTrigger(second='*/5'),
+        replace_existing=True
     )
     BTCXAU = bot_manager.create_new_bot(RSIStrategy("BTCXAU"))
     scheduler.add_job(
         BTCXAU.trade,
-        trigger=CronTrigger(second='*/5')
-    )
-    DOGEUSD = bot_manager.create_new_bot(RSIStrategy("DOGEUSD"))
-    scheduler.add_job(
-        DOGEUSD.trade,
-        trigger=CronTrigger(second='*/5')
-    )
-    IOSTUSD = bot_manager.create_new_bot(RSIStrategy("IOSTUSD"))
-    scheduler.add_job(
-        IOSTUSD.trade,
-        trigger=CronTrigger(second='*/5')
-    )
-
-    BTCKRW = bot_manager.create_new_bot(RSIStrategy("BTCKRW"))
-    scheduler.add_job(
-        BTCKRW.trade,
-        trigger=CronTrigger(second='*/5')
+        trigger=CronTrigger(second='*/5'),
+        replace_existing=True
     )
 
 

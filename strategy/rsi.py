@@ -65,10 +65,10 @@ class RSIStrategy:
 
     def report(self):
         print(f"""
-            [{datetime.now().strftime("%d/%m/%Y, %H:%M:%S")}]
-            Strategy: {type(self).__name__}
-            Symbol: {self.symbol}
-            RSI: {self.rsi}
-            Signal: {self.signal}
-            Position: {self.positions[0].ticket if self.positions else "No position"}
+[{datetime.now().strftime("%d/%m/%Y, %H:%M:%S")}]
+Strategy: {type(self).__name__}
+Symbol: {self.symbol}
+RSI: {self.rsi}
+Signal: {self.signal}
+Position: {self.positions[0].ticket if self.positions else "No position"}
         """)
