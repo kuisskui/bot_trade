@@ -5,61 +5,70 @@ from indicator import get_relative_strength_index
 
 class RSIStrategy:
     def __init__(self, symbol, time_frame=mt5_api.TIMEFRAME_M1, lot=0.01, overbought=70, oversold=30):
+        mt5_api.initialize()
+        self.signal = ""
+        self.positions = mt5_api.positions_get(symbol=symbol)
         self.symbol = symbol
         self.time_frame = time_frame
         self.lot = lot
         self.overbought = overbought
         self.oversold = oversold
+        self.rsi = 0
 
-    def check_signal(self, positions):
+    def check_signal(self):
         # this strategy might check and return hold until the port is broken if the market is dum to a way
-        global signal
         mt5_api.initialize()
-        rsi = get_relative_strength_index(self.symbol, self.time_frame, 0, 14)
-        print(f"[{datetime.now()}] :: {type(self).__name__} : RSI for now: {rsi}")
-        active_positions = mt5_api.positions_get(symbol=self.symbol)
-        if active_positions:
-            if active_positions[0].type == 1:
-                if rsi <= 50:
-                    signal = "exit"
+        self.rsi = get_relative_strength_index(self.symbol, self.time_frame, 0, 14)
+
+        if self.positions:
+            if self.positions[0].type == mt5_api.POSITION_TYPE_SELL:
+                if self.rsi <= 50:
+                    self.signal = "exit"
                 else:
-                    signal = "hold"
-            elif active_positions[0].type == 0:
-                if rsi >= 50:
-                    signal = "exit"
+                    self.signal = "hold"
+            elif self.positions[0].type == mt5_api.POSITION_TYPE_BUY:
+                if self.rsi >= 50:
+                    self.signal = "exit"
                 else:
-                    signal = "hold"
+                    self.signal = "hold"
             else:
-                signal = "hold"
-            return signal
-
-        if rsi > self.overbought:
-            signal = "sell"
-        elif rsi < self.oversold:
-            signal = "buy"
+                self.signal = "hold"
         else:
-            signal = "hold"
-        return signal
+            if self.rsi >= self.overbought:
+                self.signal = "sell"
+            elif self.rsi <= self.oversold:
+                self.signal = "buy"
+            else:
+                self.signal = "hold"
 
-    def send_order(self, signal, positions):
-        position = None
-        active_positions = mt5_api.positions_get(symbol=self.symbol)
-        if signal == "buy":
-            if not active_positions:
-                position = mt5_api.place_trade(self.symbol, self.lot, "buy")
+    def send_order(self):
+        if self.signal == "buy":
+            if not self.positions:
+                mt5_api.place_trade(self.symbol, self.lot, "buy")
 
-            elif active_positions[0].type == 1:
-                mt5_api.close_position(active_positions[0])
-                position = mt5_api.place_trade(self.symbol, self.lot, "buy")
+            elif self.positions[0].type == 1:
+                mt5_api.close_position(self.positions[0])
+                mt5_api.place_trade(self.symbol, self.lot, "buy")
 
-        elif signal == "sell":
-            if not active_positions:
-                position = mt5_api.place_trade(self.symbol, self.lot, "sell")
-            elif active_positions[0].type == 0:
-                mt5_api.close_position(active_positions[0])
-                position = mt5_api.place_trade(self.symbol, self.lot, "sell")
+        elif self.signal == "sell":
+            if not self.positions:
+                mt5_api.place_trade(self.symbol, self.lot, "sell")
+            elif self.positions[0].type == 0:
+                mt5_api.close_position(self.positions[0])
+                mt5_api.place_trade(self.symbol, self.lot, "sell")
 
-        elif signal == "exit":
-            if active_positions:
-                mt5_api.close_position(active_positions[0])
-        return position
+        elif self.signal == "exit":
+            if self.positions:
+                mt5_api.close_position(self.positions[0])
+
+        self.positions = mt5_api.positions_get(symbol=self.symbol)
+
+    def report(self):
+        print(f"""
+            [{datetime.now().strftime("%d/%m/%Y, %H:%M:%S")}]
+            Strategy: {type(self).__name__}
+            Symbol: {self.symbol}
+            RSI: {self.rsi}
+            Signal: {self.signal}
+            Position: {self.positions[0].ticket if self.positions else "No position"}
+        """)
