@@ -49,20 +49,24 @@ class RSIStrategy:
         self.positions = mt5_api.positions_get(symbol=self.symbol)
 
     def report(self):
-        report_string = f"""
-[{datetime.now().strftime("%d/%m/%Y, %H:%M:%S")}]
-Strategy: {type(self).__name__}
-Symbol: {self.symbol}
-RSI: {self.rsi}
-Signal: {self.signal}
-"""
+        datetime_string = f"[{datetime.now().strftime("%d/%m/%Y, %H:%M:%S")}]"
+        strategy_string = f"Strategy: {type(self).__name__}"
+        symbol_string = f"Symbol: {self.symbol}"
+        RSI_string = f"RSI: {self.rsi}"
+        signal_string = f"Signal: {self.signal}"
         if self.positions:
-            position_string = f"""
-Position: Type: {"BUY" if self.positions[0].type is mt5_api.POSITION_TYPE_BUY else "SELL"}
-        : Ticket: {self.positions[0].ticket}
-        """
+            position_string = f"Position: Type {"BUY" if self.positions[0].type is mt5_api.POSITION_TYPE_BUY else "SELL"}"
+            tick_string =     f"        : Ticket {self.positions[0].ticket}"
         else:
-            position_string = """
-Position: -
-            """
-        print(report_string, position_string)
+            position_string = "Position: No position"
+            tick_string = ""
+
+        print(f"""
+{datetime_string}
+{strategy_string}
+{symbol_string}
+{RSI_string}
+{signal_string}
+{position_string}
+{tick_string}
+                """)

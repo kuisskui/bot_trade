@@ -21,7 +21,7 @@ class BollingerBandsStrategy:
     def check_signal(self):
         mt5_api.initialize()
         self.positions = mt5_api.positions_get(symbol=self.symbol)
-        self.upper_band, self.lower_band, self.middle_band = get_bollinger_bands(self.symbol, self.time_frame, self.period, self.std_dev)
+        self.upper_band, self.middle_band, self.lower_band = get_bollinger_bands(self.symbol, self.time_frame, 0, self.period, self.std_dev)
         self.current_price = mt5_api.symbol_info_tick(self.symbol).bid
 
         if self.positions:
@@ -54,23 +54,31 @@ class BollingerBandsStrategy:
         self.positions = mt5_api.positions_get(symbol=self.symbol)
 
     def report(self):
-        report_string = f"""
-[{datetime.now().strftime("%d/%m/%Y, %H:%M:%S")}]
-Strategy: {type(self).__name__}
-Symbol: {self.symbol}
-Current Price: {self.current_price}
-Upper Band: {self.upper_band}
-Middle Band: {self.middle_band}
-Lower Band: {self.lower_band}
-Signal: {self.signal}
-"""
+        datetime_string = f"[{datetime.now().strftime("%d/%m/%Y, %H:%M:%S")}]"
+        strategy_string = f"Strategy: {type(self).__name__}"
+        symbol_string = f"Symbol: {self.symbol}"
+        current_price_string = f"Current Price: {self.current_price}"
+        upper_band_string = f"Upper Band: {self.upper_band}"
+        middle_band_string = f"Middle Band: {self.middle_band}"
+        lower_band_string = f"Lower Band: {self.lower_band}"
+        signal_string = f"Signal: {self.signal}"
+
         if self.positions:
-            position_string = f"""
-Position: Type: {"BUY" if self.positions[0].type is mt5_api.POSITION_TYPE_BUY else "SELL"}
-        : Ticket: {self.positions[0].ticket}
-        """
+            position_string = f"Position: Type {"BUY" if self.positions[0].type is mt5_api.POSITION_TYPE_BUY else "SELL"}"
+            ticket_string =   f"        : Ticket {self.positions[0].ticket}"
         else:
-            position_string = """
-Position: -
-            """
-        print(report_string, position_string)
+            position_string = "Position: No position"
+            ticket_string = ""
+
+        print(f"""
+{datetime_string}
+{strategy_string}
+{symbol_string}
+{current_price_string}
+{upper_band_string}
+{middle_band_string}
+{lower_band_string}
+{signal_string}
+{position_string}
+{ticket_string}
+                        """)

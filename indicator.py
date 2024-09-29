@@ -61,7 +61,7 @@ def get_bollinger_bands(symbol, timeframe, shift, period, std_dev):
     data['lower_band'] = data['sma'] - (data['std'] * std_dev)
 
     latest_data = data.iloc[-1]
-    return latest_data['upper_band'], latest_data['lower_band'], latest_data['sma']
+    return latest_data['upper_band'], latest_data['sma'], latest_data['lower_band']
 
 
 def get_ema(data, period):
