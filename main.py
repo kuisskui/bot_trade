@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from PythonMetaTrader5 import *
-from strategy import MovingAverageCrossingOverStrategy, RSIStrategy, ExponentialMovingAverageCrossingOverStrategy
+from strategy import BollingerBandsStrategy, RSIStrategy
 from dotenv import load_dotenv
 from bot.bot_manager import BotManager
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
@@ -68,13 +68,13 @@ async def trade_test_rsi_major_pair():
         trigger=CronTrigger(second='*/5'),
         replace_existing=True
     )
-    BTCJPY = bot_manager.create_new_bot(RSIStrategy("BTCJPY"))
+    BTCJPY = bot_manager.create_new_bot(BollingerBandsStrategy("BTCJPY"))
     scheduler.add_job(
         BTCJPY.trade,
         trigger=CronTrigger(second='*/5'),
         replace_existing=True
     )
-    BTCXAU = bot_manager.create_new_bot(RSIStrategy("BTCXAU"))
+    BTCXAU = bot_manager.create_new_bot(BollingerBandsStrategy("BTCXAU"))
     scheduler.add_job(
         BTCXAU.trade,
         trigger=CronTrigger(second='*/5'),

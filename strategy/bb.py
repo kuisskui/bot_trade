@@ -4,7 +4,7 @@ from datetime import datetime
 
 
 class BollingerBandsStrategy:
-    def __init__(self, symbol, time_frame, lot, period=20, std_dev=2):
+    def __init__(self, symbol, time_frame=mt5_api.TIMEFRAME_M1, lot=0.01, period=20, std_dev=2):
         self.symbol = symbol
         self.time_frame = time_frame
         self.lot = lot
