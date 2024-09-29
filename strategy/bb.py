@@ -1,4 +1,5 @@
 import mt5_api
+from indicator import get_bollinger_bands
 
 
 class BollingerBandsStrategy:

@@ -13,7 +13,7 @@ class MovingAverageCrossingOverStrategy:
         self.previous_short_ma = None
         self.previous_long_ma = None
 
-    def check_signal(self, positions):
+    def check_signal(self, order_tickets):
         mt5_api.initialize()
         current_short_ma = get_moving_average(symbol=self.symbol, timeframe=self.time_frame, shift=0, period=self.short_period)
         current_long_ma = get_moving_average(symbol=self.symbol, timeframe=self.time_frame, shift=0,  period=self.long_period)
@@ -40,7 +40,7 @@ class MovingAverageCrossingOverStrategy:
 
         return signal
 
-    def send_order(self, signal, positions):
+    def send_order(self, signal, order_tickets):
         position = None
         active_positions = mt5_api.positions_get(symbol=self.symbol)
         if signal == "buy":

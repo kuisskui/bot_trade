@@ -245,7 +245,7 @@ def place_trade(symbol, volume, trade_type, sl=0.0, tp=0.0, deviation=20, magic=
         "type_filling": mt.ORDER_FILLING_IOC,
     }
 
-    return order_send(request)
+    return order_send(request).order
 
 
 def close_all_position():
