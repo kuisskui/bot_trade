@@ -53,7 +53,7 @@ async def trade_ema():
 
 @app.post(path="/bots/trade/rsi")
 async def trade_rsi():
-    bot = bot_manager.create_new_bot(RSIStrategy("EURUSD"))
+    bot = bot_manager.create_new_bot(RSIStrategy("BTCUSD"))
     bot.trade()
     scheduler.add_job(
         bot.trade,
