@@ -45,7 +45,7 @@ scheduler: AsyncIOScheduler = AsyncIOScheduler()
 @app.on_event("startup")
 async def startup_event():
     scheduler.start()
-    await trade_test_rsi_major_pair()
+    # await trade_test_rsi_major_pair()
 
 
 @app.get(path="/bots")
