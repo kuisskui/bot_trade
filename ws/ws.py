@@ -5,7 +5,7 @@ from fastapi import APIRouter, WebSocket
 from asyncio import sleep
 from starlette.websockets import WebSocketDisconnect
 from ws.web_socket import websocket_manager
-from bot_temp.bot_model import BotDTO, PositionDTO
+from bot.bot_model import BotDTO, PositionDTO
 
 router = APIRouter(prefix="/ws")
 
