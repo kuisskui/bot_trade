@@ -26,13 +26,13 @@ class BollingerBandsStrategy:
 
         if self.positions:
             if self.positions[0].type is mt5_api.POSITION_TYPE_BUY:
-                if self.current_price >= self.middle_band:
-                    self.signal = "exit"
+                if self.current_price >= self.upper_band:
+                    self.signal = "sell"
                 else:
                     self.signal = "hold"
             elif self.positions[0].type is mt5_api.POSITION_TYPE_SELL:
-                if self.current_price <= self.middle_band:
-                    self.signal = "exit"
+                if self.current_price <= self.lower_band:
+                    self.signal = "buy"
                 else:
                     self.signal = "hold"
         else:
@@ -45,8 +45,12 @@ class BollingerBandsStrategy:
 
     def send_order(self):
         if self.signal == "buy":
+            if self.positions:
+                mt5_api.close_position(self.positions[0])
             mt5_api.place_trade(self.symbol, self.lot, "buy")
         elif self.signal == "sell":
+            if self.positions:
+                mt5_api.close_position(self.positions[0])
             mt5_api.place_trade(self.symbol, self.lot, "sell")
         elif self.signal == "exit":
             mt5_api.close_position(self.positions[0])

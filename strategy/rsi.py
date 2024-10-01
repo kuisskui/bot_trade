@@ -22,13 +22,13 @@ class RSIStrategy:
 
         if self.positions:
             if self.positions[0].type is mt5_api.POSITION_TYPE_SELL:
-                if self.rsi <= 50:
-                    self.signal = "exit"
+                if self.rsi <= self.oversold:
+                    self.signal = "buy"
                 else:
                     self.signal = "hold"
             elif self.positions[0].type is mt5_api.POSITION_TYPE_BUY:
-                if self.rsi >= 50:
-                    self.signal = "exit"
+                if self.rsi >= self.overbought:
+                    self.signal = "sell"
                 else:
                     self.signal = "hold"
         else:
@@ -41,8 +41,12 @@ class RSIStrategy:
 
     def send_order(self):
         if self.signal == "buy":
+            if self.positions:
+                mt5_api.close_position(self.positions[0])
             mt5_api.place_trade(self.symbol, self.lot, "buy")
         elif self.signal == "sell":
+            if self.positions:
+                mt5_api.close_position(self.positions[0])
             mt5_api.place_trade(self.symbol, self.lot, "sell")
         elif self.signal == "exit":
             mt5_api.close_position(self.positions[0])

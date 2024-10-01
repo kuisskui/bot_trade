@@ -74,12 +74,12 @@ async def trade_test_rsi_major_pair():
         trigger=CronTrigger(second='*/5'),
         replace_existing=True
     )
-    BTCXAU = bot_manager.create_new_bot(BollingerBandsStrategy("BTCXAU"))
-    scheduler.add_job(
-        BTCXAU.trade,
-        trigger=CronTrigger(second='*/5'),
-        replace_existing=True
-    )
+    # BTCXAU = bot_manager.create_new_bot(BollingerBandsStrategy("BTCXAU"))
+    # scheduler.add_job(
+    #     BTCXAU.trade,
+    #     trigger=CronTrigger(second='*/5'),
+    #     replace_existing=True
+    # )
 
 
 @app.on_event("shutdown")
