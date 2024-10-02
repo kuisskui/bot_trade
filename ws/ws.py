@@ -31,8 +31,9 @@ async def test():
 @router.websocket("/live")
 async def live(websocket: WebSocket):
     try:
-        await websocket_manager.connect(websocket)
+        await websocket.accept()
         while True:
+            await sleep(1)
             message = []
             for bot in bots:
                 positions = []
@@ -48,10 +49,6 @@ async def live(websocket: WebSocket):
                     positions=positions
                 )
                 message.append(bot_dto)
-            await websocket_manager.broadcast(json.dumps([bot.dict() for bot in message]))
-            await sleep(1)
-    except WebSocketDisconnect:
-        websocket_manager.disconnect(websocket)
+            await websocket.send_text(json.dumps([bot.dict() for bot in message]))
     except Exception as e:
-        websocket_manager.disconnect(websocket)
         print(e)

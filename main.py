@@ -108,20 +108,5 @@ async def shutdown_event():
     scheduler.shutdown()
 
 
-@app.websocket('/bots/live')
-async def bot_live(websocket: WebSocket):
-    print("connecting websocket")
-    await websocket_manager.connect(websocket)
-    try:
-        uptime = 0
-        while True:
-            await sleep(1)
-            await websocket_manager.broadcast(str(uptime))
-            uptime += 1
-    except WebSocketDisconnect as e:
-        websocket_manager.disconnect(websocket)
-        print("disconnecting websocket: ", e)
-
-
 if __name__ == "__main__":
     uvicorn.run(app, host="127.0.0.1", port=8000)
