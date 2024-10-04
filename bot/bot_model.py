@@ -11,4 +11,4 @@ class StrategyDTO(BaseModel):
 
 class BotDTO(BaseModel):
     bot_id: int
-    strategy: StrategyDTO
+    strategy_dto: StrategyDTO

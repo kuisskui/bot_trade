@@ -35,7 +35,7 @@ async def live(websocket: WebSocket):
                 )
                 bot_dto = BotDTO(
                     bot_id=bot.bot_id,
-                    strategy=strategy_dto
+                    strategy_dto=strategy_dto
                 )
                 message.append(bot_dto)
             await websocket.send_text(json.dumps([bot.dict() for bot in message]))
