@@ -5,22 +5,10 @@ from fastapi import APIRouter, WebSocket
 from asyncio import sleep
 from starlette.websockets import WebSocketDisconnect
 from ws.web_socket import websocket_manager
-from bot.bot_model import BotDTO, PositionDTO
+from bot.bot_model import BotDTO, StrategyDTO
+from bot.bot_manager import bot_manager
 
 router = APIRouter(prefix="/ws")
-
-bots: List[BotDTO] = [
-    BotDTO(
-        name="BTCUSD-RSI Bot Trading",
-        positions=[PositionDTO(type="buy", profit=12), PositionDTO(type="sell", profit=-2)],
-        online=True
-    ),
-    BotDTO(
-        name="BTCJPY-Bollinger Band Bot Trading",
-        positions=[PositionDTO(type="buy", profit=12), PositionDTO(type="sell", profit=-2)],
-        online=True
-    )
-]
 
 
 @router.get("/test")
@@ -34,19 +22,20 @@ async def live(websocket: WebSocket):
         await websocket.accept()
         while True:
             await sleep(1)
+            bots = bot_manager.get_bots()
             message = []
             for bot in bots:
-                positions = []
-                for position in bot.positions:
-                    position_dto = PositionDTO(
-                        type=position.type,
-                        profit=random.randint(1, 10)
-                    )
-                    positions.append(position_dto)
+                strategy = bot.strategy
+                strategy_dto = StrategyDTO(
+                    symbol=strategy.symbol,
+                    time_frame=strategy.time_frame,
+                    lot=strategy.lot,
+                    signal=strategy.signal,
+                    position=strategy.position
+                )
                 bot_dto = BotDTO(
-                    name=bot.name,
-                    online=bot.online,
-                    positions=positions
+                    bot=bot.bot_id,
+                    strategy_dto=strategy_dto
                 )
                 message.append(bot_dto)
             await websocket.send_text(json.dumps([bot.dict() for bot in message]))

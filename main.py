@@ -38,6 +38,7 @@ app.include_router(ws.router)
 account_id = 176471571  # Your account number
 password = os.getenv("password")  # Your MetaTrader password
 server = "Exness-MT5Trial7"  # The server for your account
+
 bot_manager: BotManager = BotManager()
 scheduler: AsyncIOScheduler = AsyncIOScheduler()
 
@@ -45,7 +46,7 @@ scheduler: AsyncIOScheduler = AsyncIOScheduler()
 @app.on_event("startup")
 async def startup_event():
     scheduler.start()
-    # await trade_test_rsi_major_pair()
+    await trade_test_rsi_major_pair()
 
 
 @app.get(path="/bots")

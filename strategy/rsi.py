@@ -1,10 +1,13 @@
 import mt5_api
 from datetime import datetime
+
+from strategy.strategy import Strategy
 from indicator import get_relative_strength_index
 
 
-class RSIStrategy:
+class RSIStrategy(Strategy):
     def __init__(self, symbol, time_frame=mt5_api.TIMEFRAME_M1, lot=0.01, overbought=70, oversold=30):
+        super().__init__()
         self.symbol = symbol
         self.time_frame = time_frame
         self.lot = lot

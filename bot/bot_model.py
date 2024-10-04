@@ -1,13 +1,14 @@
 from pydantic import BaseModel
-from typing import List
 
 
-class PositionDTO(BaseModel):
-    type: str
-    profit: float
+class StrategyDTO(BaseModel):
+    symbol: str
+    time_frame: float
+    lot: float
+    signal: str
+    position: str
 
 
 class BotDTO(BaseModel):
-    name: str
-    positions: List[PositionDTO]
-    online: bool
+    bot_id: int
+    strategy: StrategyDTO
