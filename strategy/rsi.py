@@ -15,21 +15,21 @@ class RSIStrategy(Strategy):
         self.oversold = oversold
 
         self.signal = ""
-        self.positions = None
+        self.position = None
         self.rsi = 0
 
     def check_signal(self):
         mt5_api.initialize()
-        self.positions = mt5_api.positions_get(symbol=self.symbol)
+        self.position = mt5_api.positions_get(symbol=self.symbol)
         self.rsi = get_relative_strength_index(self.symbol, self.time_frame, 0, 14)
 
-        if self.positions:
-            if self.positions[0].type is mt5_api.POSITION_TYPE_SELL:
+        if self.position:
+            if self.position[0].type is mt5_api.POSITION_TYPE_SELL:
                 if self.rsi <= self.oversold:
                     self.signal = "buy"
                 else:
                     self.signal = "hold"
-            elif self.positions[0].type is mt5_api.POSITION_TYPE_BUY:
+            elif self.position[0].type is mt5_api.POSITION_TYPE_BUY:
                 if self.rsi >= self.overbought:
                     self.signal = "sell"
                 else:
@@ -44,16 +44,16 @@ class RSIStrategy(Strategy):
 
     def send_order(self):
         if self.signal == "buy":
-            if self.positions:
-                mt5_api.close_position(self.positions[0])
+            if self.position:
+                mt5_api.close_position(self.position[0])
             mt5_api.place_trade(self.symbol, self.lot, "buy")
         elif self.signal == "sell":
-            if self.positions:
-                mt5_api.close_position(self.positions[0])
+            if self.position:
+                mt5_api.close_position(self.position[0])
             mt5_api.place_trade(self.symbol, self.lot, "sell")
         elif self.signal == "exit":
-            mt5_api.close_position(self.positions[0])
-        self.positions = mt5_api.positions_get(symbol=self.symbol)
+            mt5_api.close_position(self.position[0])
+        self.position = mt5_api.positions_get(symbol=self.symbol)
 
     def report(self):
         datetime_string = f"[{datetime.now().strftime("%d/%m/%Y, %H:%M:%S")}]"
@@ -61,9 +61,9 @@ class RSIStrategy(Strategy):
         symbol_string = f"Symbol: {self.symbol}"
         RSI_string = f"RSI: {self.rsi}"
         signal_string = f"Signal: {self.signal}"
-        if self.positions:
-            position_string = f"Position: Type {"BUY" if self.positions[0].type is mt5_api.POSITION_TYPE_BUY else "SELL"}"
-            tick_string =     f"        : Ticket {self.positions[0].ticket}"
+        if self.position:
+            position_string = f"Position: Type {"BUY" if self.position[0].type is mt5_api.POSITION_TYPE_BUY else "SELL"}"
+            tick_string =     f"        : Ticket {self.position[0].ticket}"
         else:
             position_string = "Position: No position"
             tick_string = ""

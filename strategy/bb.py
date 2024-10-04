@@ -12,7 +12,7 @@ class BollingerBandsStrategy:
         self.std_dev = std_dev
 
         self.signal = ""
-        self.positions = None
+        self.position = None
         self.upper_band = None
         self.middle_band = None
         self.lower_band = None
@@ -20,17 +20,17 @@ class BollingerBandsStrategy:
 
     def check_signal(self):
         mt5_api.initialize()
-        self.positions = mt5_api.positions_get(symbol=self.symbol)
+        self.position = mt5_api.positions_get(symbol=self.symbol)
         self.upper_band, self.middle_band, self.lower_band = get_bollinger_bands(self.symbol, self.time_frame, 0, self.period, self.std_dev)
         self.current_price = mt5_api.symbol_info_tick(self.symbol).bid
 
-        if self.positions:
-            if self.positions[0].type is mt5_api.POSITION_TYPE_BUY:
+        if self.position:
+            if self.position[0].type is mt5_api.POSITION_TYPE_BUY:
                 if self.current_price >= self.upper_band:
                     self.signal = "sell"
                 else:
                     self.signal = "hold"
-            elif self.positions[0].type is mt5_api.POSITION_TYPE_SELL:
+            elif self.position[0].type is mt5_api.POSITION_TYPE_SELL:
                 if self.current_price <= self.lower_band:
                     self.signal = "buy"
                 else:
@@ -45,17 +45,17 @@ class BollingerBandsStrategy:
 
     def send_order(self):
         if self.signal == "buy":
-            if self.positions:
-                mt5_api.close_position(self.positions[0])
+            if self.position:
+                mt5_api.close_position(self.position[0])
             mt5_api.place_trade(self.symbol, self.lot, "buy")
         elif self.signal == "sell":
-            if self.positions:
-                mt5_api.close_position(self.positions[0])
+            if self.position:
+                mt5_api.close_position(self.position[0])
             mt5_api.place_trade(self.symbol, self.lot, "sell")
         elif self.signal == "exit":
-            mt5_api.close_position(self.positions[0])
+            mt5_api.close_position(self.position[0])
 
-        self.positions = mt5_api.positions_get(symbol=self.symbol)
+        self.position = mt5_api.positions_get(symbol=self.symbol)
 
     def report(self):
         datetime_string = f"[{datetime.now().strftime("%d/%m/%Y, %H:%M:%S")}]"
@@ -67,9 +67,9 @@ class BollingerBandsStrategy:
         lower_band_string = f"Lower Band: {self.lower_band}"
         signal_string = f"Signal: {self.signal}"
 
-        if self.positions:
-            position_string = f"Position: Type {"BUY" if self.positions[0].type is mt5_api.POSITION_TYPE_BUY else "SELL"}"
-            ticket_string =   f"        : Ticket {self.positions[0].ticket}"
+        if self.position:
+            position_string = f"Position: Type {"BUY" if self.position[0].type is mt5_api.POSITION_TYPE_BUY else "SELL"}"
+            ticket_string =   f"        : Ticket {self.position[0].ticket}"
         else:
             position_string = "Position: No position"
             ticket_string = ""

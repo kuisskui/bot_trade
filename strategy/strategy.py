@@ -4,4 +4,4 @@ class Strategy:
         self.time_frame = None
         self.lot = None
         self.signal = None
-        self.positions = None
+        self.position = None

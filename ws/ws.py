@@ -31,11 +31,11 @@ async def live(websocket: WebSocket):
                     time_frame=strategy.time_frame,
                     lot=strategy.lot,
                     signal=strategy.signal,
-                    position=strategy.position
+                    position="Buy" if strategy.position[0].type == 0 else "Sell",
                 )
                 bot_dto = BotDTO(
-                    bot=bot.bot_id,
-                    strategy_dto=strategy_dto
+                    bot_id=bot.bot_id,
+                    strategy=strategy_dto
                 )
                 message.append(bot_dto)
             await websocket.send_text(json.dumps([bot.dict() for bot in message]))

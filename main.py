@@ -13,7 +13,7 @@ from fastapi import FastAPI
 from PythonMetaTrader5 import *
 from strategy import BollingerBandsStrategy, RSIStrategy
 from dotenv import load_dotenv
-from bot.bot_manager import BotManager
+from bot.bot_manager import bot_manager
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.triggers.cron import CronTrigger
 
@@ -39,7 +39,6 @@ account_id = 176471571  # Your account number
 password = os.getenv("password")  # Your MetaTrader password
 server = "Exness-MT5Trial7"  # The server for your account
 
-bot_manager: BotManager = BotManager()
 scheduler: AsyncIOScheduler = AsyncIOScheduler()
 
 
