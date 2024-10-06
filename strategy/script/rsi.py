@@ -18,6 +18,9 @@ class RSIStrategy(Strategy):
         self.position = None
         self.rsi = 0
 
+    def get_signal(self):
+        return self.check_signal()
+
     def check_signal(self):
         mt5_api.initialize()
         self.position = mt5_api.positions_get(symbol=self.symbol)
@@ -63,7 +66,7 @@ class RSIStrategy(Strategy):
         signal_string = f"Signal: {self.signal}"
         if self.position:
             position_string = f"Position: Type {"BUY" if self.position[0].type is mt5_api.POSITION_TYPE_BUY else "SELL"}"
-            tick_string =     f"        : Ticket {self.position[0].ticket}"
+            tick_string = f"        : Ticket {self.position[0].ticket}"
         else:
             position_string = "Position: No position"
             tick_string = ""
@@ -77,3 +80,12 @@ class RSIStrategy(Strategy):
 {position_string}
 {tick_string}
                 """)
+
+
+import sys
+import json
+
+if __name__ == "__main__":
+    json = json.loads(sys.argv[1])
+    rsi = RSIStrategy(json['symbol'])
+    print(rsi.get_signal())
