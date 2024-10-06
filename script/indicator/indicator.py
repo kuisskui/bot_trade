@@ -1,6 +1,5 @@
-from mt5_api import *
+from script.mt5.mt5_api import *
 
-import MetaTrader5 as mt5
 import pandas as pd
 
 

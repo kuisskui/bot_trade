@@ -1,6 +1,6 @@
-import mt5_api
+from script.mt5 import mt5_api
 from datetime import datetime
-from script.indicator import get_moving_average
+from script.indicator.indicator import get_moving_average
 
 
 class MovingAverageCrossingOverStrategy:

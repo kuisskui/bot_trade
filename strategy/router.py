@@ -11,8 +11,7 @@ strategy_router = APIRouter(prefix="/strategies")
 
 @strategy_router.get("/")
 async def get_strategies():
-    strategy_manager.add_strategy(Strategy('rsi.py', symbol="BTCUSD"))
-    return strategy_manager.get_active_strategies()
+    return [s.split('.')[0] for s in strategy_manager.get_all_strategies()]
 
 
 @strategy_router.post("/run")
