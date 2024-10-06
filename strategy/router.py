@@ -13,7 +13,7 @@ async def root():
     return {"strategy": strategy.get_signal(), "script": strategy.script}
 
 
-@router.websocket("/strategies")
+@strategy_router.websocket("/strategies")
 async def strategy(websocket: WebSocket):
     try:
         await websocket.accept()
