@@ -1,6 +1,8 @@
-import mt5_api
+import json
+import sys
 from datetime import datetime
 
+import mt5_api
 from indicator import get_relative_strength_index
 
 
@@ -80,9 +82,6 @@ class RSIStrategy:
 {tick_string}
                 """)
 
-
-import sys
-import json
 
 if __name__ == "__main__":
     json = json.loads(sys.argv[1])

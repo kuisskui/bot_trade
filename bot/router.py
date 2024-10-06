@@ -6,10 +6,10 @@ from fastapi import APIRouter, WebSocket
 from bot.bot_manager import bot_manager
 from bot.bot_model import BotDTO, StrategyDTO
 
-router = APIRouter(prefix="/ws")
+bot_router = APIRouter(prefix="/bots")
 
 
-@router.websocket("/bots")
+@bot_router.websocket("/ws")
 async def live(websocket: WebSocket):
     try:
         await websocket.accept()
@@ -35,13 +35,3 @@ async def live(websocket: WebSocket):
     except Exception as e:
         print(e)
 
-
-@router.websocket("/strategies")
-async def strategy(websocket: WebSocket):
-    try:
-        await websocket.accept()
-        while True:
-            await sleep(1)
-            await websocket.send_text("Strategy interface")
-    except Exception as e:
-        print(e)
