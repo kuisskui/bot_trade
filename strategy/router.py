@@ -1,19 +1,22 @@
+import json
 from asyncio import sleep
 
 from fastapi import APIRouter, WebSocket
 
 from strategy.strategy import Strategy
 
+from .strategy_manager import strategy_manager
+
 strategy_router = APIRouter(prefix="/strategies")
 
 
 @strategy_router.get("/")
-async def root():
-    strategy = Strategy('rsi.py')
-    return {"strategy": strategy.get_signal(), "script": strategy.script}
+async def get_strategies():
+    strategy_manager.add_strategy(Strategy('rsi.py'))
+    return strategy_manager.get_strategies()
 
 
-@strategy_router.websocket("/strategies")
+@strategy_router.websocket("/ws")
 async def strategy(websocket: WebSocket):
     try:
         await websocket.accept()

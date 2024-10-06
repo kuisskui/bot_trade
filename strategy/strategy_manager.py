@@ -1,17 +1,20 @@
-from strategy import Strategy
+from .strategy import Strategy
 from typing import List
 
 
 class StrategyManager:
     def __init__(self):
-        self.strategies: List[Strategy] = []
+        self.__strategies: List[Strategy] = []
 
     def add_strategy(self, strategy: Strategy):
-        self.strategies.append(strategy)
+        self.__strategies.append(strategy)
         return strategy
 
     def remove_strategy(self, strategy: Strategy):
-        self.strategies.remove(strategy)
+        self.__strategies.remove(strategy)
+
+    def get_strategies(self):
+        return self.__strategies
 
 
 strategy_manager = StrategyManager()
