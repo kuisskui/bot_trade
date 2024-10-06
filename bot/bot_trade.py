@@ -1,8 +1,3 @@
-from datetime import datetime
-
-import mt5_api as mt5
-
-
 class BotTrade:
     def __init__(self, bot_id, strategy):
         self.bot_id: int = bot_id

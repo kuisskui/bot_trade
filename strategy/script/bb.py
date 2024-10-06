@@ -1,5 +1,5 @@
 import mt5_api
-from indicator import get_bollinger_bands
+from strategy.script.indicator import get_bollinger_bands
 from datetime import datetime
 
 

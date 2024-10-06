@@ -1,8 +1,11 @@
 from fastapi import APIRouter
+from strategy.strategy import Strategy
 
-router = APIRouter(prefix="/strategies")
+
+strategy_router = APIRouter(prefix="/strategies")
 
 
-@router.get("/")
+@strategy_router.get("/")
 async def root():
-    return {"message": "Hello World"}
+    strategy = Strategy('rsi.py')
+    return {"strategy": strategy.get_signal(), "script": strategy.script}
