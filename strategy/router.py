@@ -1,11 +1,10 @@
-import json
 from asyncio import sleep
 
 from fastapi import APIRouter, WebSocket
 
 from strategy.strategy import Strategy
 
-from .strategy_manager import strategy_manager
+from strategy.strategy_manager import strategy_manager
 
 strategy_router = APIRouter(prefix="/strategies")
 

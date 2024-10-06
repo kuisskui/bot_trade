@@ -1,4 +1,4 @@
-from .strategy import Strategy
+from strategy.strategy import Strategy
 from typing import List
 
 

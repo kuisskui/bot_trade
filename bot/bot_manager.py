@@ -1,12 +1,10 @@
 from bot.bot_trade import BotTrade
+from typing import List
 
 
 class BotManager:
-    def __init__(self, bots: list[BotTrade] = None):
-        if bots is None:
-            self.__bots = []
-        else:
-            self.__bots = bots
+    def __init__(self):
+        self.__bots: List[BotTrade] = []
 
     def create_new_bot(self, strategy):
         bot_id = 1
