@@ -1,25 +1,15 @@
-from fastapi import FastAPI, WebSocket
-from apscheduler.schedulers.asyncio import AsyncIOScheduler
-from dotenv import load_dotenv
-from bot import BotTrade
-from asyncio import sleep
-from fastapi.middleware.cors import CORSMiddleware
-from starlette.websockets import WebSocketDisconnect
-from ws.web_socket import websocket_manager
-from ws import ws
-import uvicorn
-import os
-from fastapi import FastAPI
-from PythonMetaTrader5 import *
-from strategy import BollingerBandsStrategy, RSIStrategy
-from dotenv import load_dotenv
-from bot.bot_manager import bot_manager
-from apscheduler.schedulers.asyncio import AsyncIOScheduler
-from apscheduler.triggers.cron import CronTrigger
-
-import uvicorn
 import os
 import pytz
+import uvicorn
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
+from apscheduler.triggers.cron import CronTrigger
+from dotenv import load_dotenv
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+
+from bot.bot_manager import bot_manager
+from strategy import RSIStrategy
+from ws import ws
 
 load_dotenv()
 
@@ -45,7 +35,7 @@ scheduler: AsyncIOScheduler = AsyncIOScheduler()
 @app.on_event("startup")
 async def startup_event():
     scheduler.start()
-    await trade_test_rsi_major_pair()
+    await trade_rsi_major_pair()
 
 
 @app.get(path="/bots")
@@ -53,7 +43,7 @@ def get_bots():
     return bot_manager.bots
 
 
-async def trade_rsi_major_pair():
+async def trade_test():
     print("Start trade")
     thai_timezone = pytz.timezone('Asia/Bangkok')
     eurusd_bot = bot_manager.create_new_bot(RSIStrategy("EURUSD"))
@@ -81,26 +71,26 @@ async def trade_rsi_major_pair():
     )
 
 
-async def trade_test_rsi_major_pair():
-    print("Start test: trade_test_rsi_major_pair")
+async def trade_rsi_major_pair():
+    UTC_timezone = pytz.timezone('UTC')
     BTCUSD = bot_manager.create_new_bot(RSIStrategy("BTCUSD"))
     scheduler.add_job(
         BTCUSD.trade,
-        trigger=CronTrigger(second='*/5'),
+        trigger=CronTrigger(day_of_week="*", minute="*", timezone=UTC_timezone),
         replace_existing=True
     )
-    BTCJPY = bot_manager.create_new_bot(BollingerBandsStrategy("BTCJPY"))
+    BTCJPY = bot_manager.create_new_bot(RSIStrategy("BTCJPY"))
     scheduler.add_job(
         BTCJPY.trade,
-        trigger=CronTrigger(second='*/5'),
+        trigger=CronTrigger(day_of_week="*", minute="*", timezone=UTC_timezone),
         replace_existing=True
     )
-    # BTCXAU = bot_manager.create_new_bot(BollingerBandsStrategy("BTCXAU"))
-    # scheduler.add_job(
-    #     BTCXAU.trade,
-    #     trigger=CronTrigger(second='*/5'),
-    #     replace_existing=True
-    # )
+    BTCXAU = bot_manager.create_new_bot(RSIStrategy("BTCXAU"))
+    scheduler.add_job(
+        BTCXAU.trade,
+        trigger=CronTrigger(day_of_week="*", minute="*", timezone=UTC_timezone),
+        replace_existing=True
+    )
 
 
 @app.on_event("shutdown")

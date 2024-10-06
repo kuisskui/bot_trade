@@ -1,22 +1,15 @@
 import json
-import random
-from typing import List
-from fastapi import APIRouter, WebSocket
 from asyncio import sleep
-from starlette.websockets import WebSocketDisconnect
-from ws.web_socket import websocket_manager
-from bot.bot_model import BotDTO, StrategyDTO
+
+from fastapi import APIRouter, WebSocket
+
 from bot.bot_manager import bot_manager
+from bot.bot_model import BotDTO, StrategyDTO
 
 router = APIRouter(prefix="/ws")
 
 
-@router.get("/test")
-async def test():
-    return "test"
-
-
-@router.websocket("/live")
+@router.websocket("/bots")
 async def live(websocket: WebSocket):
     try:
         await websocket.accept()
@@ -39,5 +32,16 @@ async def live(websocket: WebSocket):
                 )
                 message.append(bot_dto)
             await websocket.send_text(json.dumps([bot.dict() for bot in message]))
+    except Exception as e:
+        print(e)
+
+
+@router.websocket("/strategies")
+async def strategy(websocket: WebSocket):
+    try:
+        await websocket.accept()
+        while True:
+            await sleep(1)
+            await websocket.send_text("Strategy interface")
     except Exception as e:
         print(e)
