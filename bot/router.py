@@ -9,6 +9,11 @@ from bot.bot_model import BotDTO, StrategyDTO
 bot_router = APIRouter(prefix="/bots")
 
 
+@bot_router.get("/")
+async def get_bots():
+    return bot_manager.get_bots()
+
+
 @bot_router.websocket("/ws")
 async def live(websocket: WebSocket):
     try:
