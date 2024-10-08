@@ -1,3 +1,5 @@
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
+from apscheduler.triggers.cron import CronTrigger
 from strategy.strategy import Strategy
 from typing import List
 from dotenv import load_dotenv
@@ -17,7 +19,7 @@ class StrategyManager:
         self.__active_strategies.append(strategy)
         return strategy
 
-    def run_new_strategy(self, script, state):
+    def run_new_strategy(self, script, trigger, state):
         strategy_id = 1
         while True:
             if strategy_id not in [strategy.strategy_id for strategy in self.__active_strategies]:
@@ -25,6 +27,14 @@ class StrategyManager:
             strategy_id += 1
 
         strategy = Strategy(strategy_id, script, state)
+
+        cron_trigger = CronTrigger(**trigger)
+        scheduler = AsyncIOScheduler()
+        scheduler.start()
+        scheduler.add_job(
+            strategy.get_signal,
+            trigger=cron_trigger
+        )
         self.add_strategy(strategy)
         return strategy
 
@@ -41,5 +51,6 @@ class StrategyManager:
         for strategy in self.__active_strategies:
             if strategy.strategy_id == strategy_id:
                 return strategy
+
 
 strategy_manager = StrategyManager()
