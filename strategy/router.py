@@ -18,7 +18,7 @@ async def get_strategies():
 
 @strategy_router.get("/active")
 async def get_strategies():
-    return [(s.script, s.signal) for s in strategy_manager.get_active_strategies()]
+    return [(s.strategy_id, s.script, s.signal) for s in strategy_manager.get_active_strategies()]
 
 
 @strategy_router.post("/run")
@@ -28,16 +28,13 @@ async def post_strategies(request: Request):
     try:
         script = state.get("script")
         trigger_data = state.get("trigger")
-        print("debug: ")
-        print(type(trigger_data))
-        print(trigger_data)
 
         if not script or not trigger_data:
             return {"status": 400, "message": "Missing 'script' or 'trigger' in the request."}
 
         cron_trigger = CronTrigger(**trigger_data)
 
-        s = Strategy(script, state)
+        s = strategy_manager.run_new_strategy(script, state)
 
         scheduler = AsyncIOScheduler()
         scheduler.start()
@@ -46,8 +43,7 @@ async def post_strategies(request: Request):
             trigger=cron_trigger
         )
 
-        strategy_manager.add_strategy(s)
-        return {"status": 200, "state": state}
+        return {"status": 200, "message": "run successfully"}
 
     except Exception as e:
         return {"status": 500, "message": str(e)}
