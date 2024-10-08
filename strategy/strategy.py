@@ -12,16 +12,15 @@ SCRIPT_DIR = BASE_DIR / os.getenv("SCRIPT_DIR")
 
 
 class Strategy:
-    def __init__(self, script, **kwargs):
+    def __init__(self, script, state):
         self.script = script
-        self.kwargs = kwargs
+        self.state = state
 
     def get_signal(self):
         try:
-            json_str = json.dumps(self.kwargs)
             print(str(SCRIPT_DIR / self.script))
             result = subprocess.run(
-                [sys.executable, str(SCRIPT_DIR / self.script), json_str],
+                [sys.executable, str(SCRIPT_DIR / self.script), self.state],
                 capture_output=True,
                 text=True
             )
