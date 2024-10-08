@@ -18,27 +18,39 @@ async def get_strategies():
 
 @strategy_router.get("/active")
 async def get_strategies():
-    return [s.script for s in strategy_manager.get_active_strategies()]
+    return [(s.script, s.signal) for s in strategy_manager.get_active_strategies()]
 
 
 @strategy_router.post("/run")
 async def post_strategies(request: Request):
     state = await request.json()
-    script = state["script"]
-    trigger = state["trigger"]
 
-    s = Strategy(script, state)
-    cron_trigger = CronTrigger(trigger)
+    try:
+        script = state.get("script")
+        trigger_data = state.get("trigger")
+        print("debug: ")
+        print(type(trigger_data))
+        print(trigger_data)
 
-    scheduler = AsyncIOScheduler()
-    scheduler.start()
-    scheduler.add_job(
-        s.get_signal(),
-        trigger=cron_trigger,
-    )
+        if not script or not trigger_data:
+            return {"status": 400, "message": "Missing 'script' or 'trigger' in the request."}
 
-    strategy_manager.add_strategy()
-    return {"status": 200, "state": state}
+        cron_trigger = CronTrigger(**trigger_data)
+
+        s = Strategy(script, state)
+
+        scheduler = AsyncIOScheduler()
+        scheduler.start()
+        scheduler.add_job(
+            s.get_signal,
+            trigger=cron_trigger
+        )
+
+        strategy_manager.add_strategy(s)
+        return {"status": 200, "state": state}
+
+    except Exception as e:
+        return {"status": 500, "message": str(e)}
 
 
 @strategy_router.websocket("/ws")

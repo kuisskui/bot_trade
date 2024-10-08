@@ -2,8 +2,8 @@ import json
 import sys
 from datetime import datetime
 
-from script.mt5 import mt5_api
-from script.indicator.indicator import get_relative_strength_index
+from mt5 import mt5_api
+from indicator.indicator import get_relative_strength_index
 
 
 class RSIStrategy:

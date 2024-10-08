@@ -1,4 +1,4 @@
-from script.mt5.mt5_api import *
+from mt5.mt5_api import *
 
 import pandas as pd
 

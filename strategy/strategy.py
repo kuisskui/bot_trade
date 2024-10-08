@@ -15,16 +15,16 @@ class Strategy:
     def __init__(self, script, state):
         self.script = script
         self.state = state
+        self.signal = None
 
     def get_signal(self):
         try:
-            print(str(SCRIPT_DIR / self.script))
             result = subprocess.run(
-                [sys.executable, str(SCRIPT_DIR / self.script), self.state],
+                [sys.executable, str(SCRIPT_DIR / self.script), json.dumps(self.state)],
                 capture_output=True,
                 text=True
             )
-            return result.stdout.strip()
+            self.signal = result.stdout.strip()
 
         except subprocess.CalledProcessError as e:
             print("Error: ", e.stderr)
