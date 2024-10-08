@@ -49,7 +49,9 @@ async def post_strategies(request: Request):
 
 
 @strategy_router.post("/subscribe")
-async def follow_trade_strategy(strategy_id: int):
+async def follow_trade_strategy(request: Request):
+    state = await request.json()
+    strategy_id = state.get('strategy_id')
     bot = bot_manager.create_new_bot()
     strategy = strategy_manager.get_strategy_by_id(strategy_id)
     strategy.subscribe(bot)
