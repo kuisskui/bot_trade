@@ -1,18 +1,10 @@
 class BotTrade:
-    def __init__(self, bot_id, strategy):
+    def __init__(self, bot_id):
         self.bot_id: int = bot_id
-        self.strategy = strategy
+        self.position_ticket = None
 
-    def trade(self):
-        self.check_signal()
-        self.send_order()
-        self.report()
+    def trade(self, signal):
+        print(f"Bot: {self.bot_id} Trade: {signal}")
 
-    def check_signal(self):
-        self.strategy.check_signal()
-
-    def send_order(self):
-        self.strategy.send_order()
-
-    def report(self):
-        self.strategy.report()
+    def update(self, signal):
+        self.trade(signal)
