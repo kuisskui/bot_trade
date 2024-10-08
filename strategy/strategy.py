@@ -1,10 +1,12 @@
 from pathlib import Path
+from typing import List
 from dotenv import load_dotenv
 import os
 import subprocess
 import json
 import sys
 
+from bot.bot_trade import BotTrade
 load_dotenv()
 
 BASE_DIR = Path(os.getenv("BASE_DIR"))
@@ -17,6 +19,7 @@ class Strategy:
         self.script = script
         self.state = state
         self.signal = None
+        self.subscribers: List[BotTrade] = []
 
     def get_signal(self):
         try:
@@ -29,4 +32,16 @@ class Strategy:
 
         except subprocess.CalledProcessError as e:
             print("Error: ", e.stderr)
-            return None
+            self.signal = None
+        finally:
+            self.notify_subscribers()
+
+    def subscribe(self, subscriber: BotTrade):
+        self.subscribers.append(subscriber)
+
+    def unsubscribe(self, subscriber: BotTrade):
+        self.subscribers.remove(subscriber)
+
+    def notify_subscribers(self):
+        for subscriber in self.subscribers:
+            subscriber.update(self.signal)
