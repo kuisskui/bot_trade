@@ -1,12 +1,11 @@
 from asyncio import sleep
 
-from fastapi import APIRouter, WebSocket, Request
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.triggers.cron import CronTrigger
-
-from strategy.strategy import Strategy
+from fastapi import APIRouter, WebSocket, Request
 
 from strategy.strategy_manager import strategy_manager
+from bot.bot_manager import bot_manager
 
 strategy_router = APIRouter(prefix="/strategies")
 
@@ -47,6 +46,14 @@ async def post_strategies(request: Request):
 
     except Exception as e:
         return {"status": 500, "message": str(e)}
+
+
+@strategy_router.post("/subscribe")
+async def follow_trade_strategy(strategy_id: int):
+    bot = bot_manager.create_new_bot()
+    strategy = strategy_manager.get_strategy_by_id(strategy_id)
+    strategy.subscribe(bot)
+    return {"status": 200, "message": "subscribe successfully"}
 
 
 @strategy_router.websocket("/ws")

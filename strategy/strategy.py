@@ -15,7 +15,7 @@ SCRIPT_DIR = BASE_DIR / os.getenv("SCRIPT_DIR")
 
 class Strategy:
     def __init__(self, strategy_id, script, state):
-        self.strategy_id = strategy_id
+        self.strategy_id: int = strategy_id
         self.script = script
         self.state = state
         self.signal = None

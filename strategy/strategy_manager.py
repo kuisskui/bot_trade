@@ -37,5 +37,9 @@ class StrategyManager:
     def get_active_strategies(self):
         return self.__active_strategies
 
+    def get_strategy_by_id(self, strategy_id):
+        for strategy in self.__active_strategies:
+            if strategy.strategy_id == strategy_id:
+                return strategy
 
 strategy_manager = StrategyManager()
