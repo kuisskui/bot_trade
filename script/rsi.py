@@ -51,12 +51,15 @@ class RSIStrategy:
             if self.position:
                 mt5_api.close_position(self.position[0])
             mt5_api.place_trade(self.symbol, self.lot, "buy")
+
         elif self.signal == "sell":
             if self.position:
                 mt5_api.close_position(self.position[0])
             mt5_api.place_trade(self.symbol, self.lot, "sell")
+
         elif self.signal == "exit":
             mt5_api.close_position(self.position[0])
+
         self.position = mt5_api.positions_get(symbol=self.symbol)
 
     def report(self):
@@ -65,6 +68,7 @@ class RSIStrategy:
         symbol_string = f"Symbol: {self.symbol}"
         RSI_string = f"RSI: {self.rsi}"
         signal_string = f"Signal: {self.signal}"
+
         if self.position:
             position_string = f"Position: Type {"BUY" if self.position[0].type is mt5_api.POSITION_TYPE_BUY else "SELL"}"
             tick_string = f"        : Ticket {self.position[0].ticket}"
@@ -84,7 +88,10 @@ class RSIStrategy:
 
 
 if __name__ == "__main__":
-    json = json.loads(sys.argv[1])
-    rsi = RSIStrategy(json['symbol'])
+    json_data: dict = json.loads(sys.argv[1])
+    symbol = json_data.get("symbol")
+    rsi = RSIStrategy(symbol)
     rsi.check_signal()
-    print(rsi.get_signal())
+    signal = rsi.get_signal()
+    json_data['signal'] = [signal]
+    print(json.dumps(json_data))
