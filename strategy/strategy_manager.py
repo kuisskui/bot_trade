@@ -10,6 +10,8 @@ load_dotenv()
 BASE_DIR = Path(os.getenv("BASE_DIR"))
 SCRIPT_DIR = BASE_DIR / os.getenv("SCRIPT_DIR")
 
+scheduler = AsyncIOScheduler()
+
 
 class StrategyManager:
     def __init__(self):
@@ -29,17 +31,18 @@ class StrategyManager:
         strategy = Strategy(strategy_id, script, state)
 
         cron_trigger = CronTrigger(**trigger)
-        scheduler = AsyncIOScheduler()
         scheduler.start()
         scheduler.add_job(
             strategy.get_signal,
-            trigger=cron_trigger
+            trigger=cron_trigger,
+            id=str(strategy.strategy_id)
         )
         self.add_strategy(strategy)
         return strategy
 
     def remove_strategy(self, strategy: Strategy):
         self.__active_strategies.remove(strategy)
+        scheduler.remove_job(str(strategy.strategy_id))
 
     def get_all_strategies(self):
         return [f for f in os.listdir(SCRIPT_DIR) if f.endswith('.py')]
