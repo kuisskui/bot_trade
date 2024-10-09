@@ -28,7 +28,9 @@ class Strategy:
                 capture_output=True,
                 text=True
             )
-            self.signal = result.stdout.strip()
+            output = result.stdout.strip()
+            self.state = json.loads(output)
+            self.signal = self.state.get("signal")
 
         except subprocess.CalledProcessError as e:
             print("Error: ", e.stderr)
