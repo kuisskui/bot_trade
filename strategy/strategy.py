@@ -6,6 +6,7 @@ import subprocess
 import json
 import sys
 
+from order import Order
 from bot.bot_trade import BotTrade
 load_dotenv()
 
@@ -18,7 +19,6 @@ class Strategy:
         self.strategy_id: int = strategy_id
         self.script = script
         self.state = state
-        self.signal = None
         self.subscribers: List[BotTrade] = []
 
     def get_signal(self):
@@ -28,15 +28,20 @@ class Strategy:
                 capture_output=True,
                 text=True
             )
-            output = result.stdout.strip()
-            self.state = json.loads(output)
-            self.signal = self.state.get("signal")
+
+            json_data = json.loads(result.stdout.strip())
+
+            if isinstance(json_data, list):
+                for order_dict in json_data:
+                    temp_order = Order(order_dict['symbol'], order_dict['lot'], order_dict['order_type'])
+                    self.notify_subscribers(temp_order)
+            if isinstance(json_data, dict):
+                order_dict = json_data
+                temp_order = Order(order_dict['symbol'], order_dict['lot'], order_dict['order_type'])
+                self.notify_subscribers(temp_order)
 
         except subprocess.CalledProcessError as e:
             print("Error: ", e.stderr)
-            self.signal = None
-        finally:
-            self.notify_subscribers()
 
     def subscribe(self, subscriber: BotTrade):
         self.subscribers.append(subscriber)
@@ -44,6 +49,6 @@ class Strategy:
     def unsubscribe(self, subscriber: BotTrade):
         self.subscribers.remove(subscriber)
 
-    def notify_subscribers(self):
+    def notify_subscribers(self, order: Order):
         for subscriber in self.subscribers:
-            subscriber.update(self.signal)
+            subscriber.update(order)
