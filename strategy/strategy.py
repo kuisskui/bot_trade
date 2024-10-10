@@ -33,12 +33,12 @@ class Strategy:
 
             if isinstance(json_data, list):
                 for order_dict in json_data:
-                    temp_order = Order(order_dict['symbol'], order_dict['lot'], order_dict['order_type'])
-                    self.notify_subscribers(temp_order)
+                    order = Order(order_dict.get('symbol'), order_dict.get('order_type'))
+                    self.notify_subscribers(order)
             if isinstance(json_data, dict):
-                order_dict = json_data
-                temp_order = Order(order_dict['symbol'], order_dict['lot'], order_dict['order_type'])
-                self.notify_subscribers(temp_order)
+                order_dict: dict = json_data
+                order = Order(order_dict.get('symbol'), order_dict.get('order_type'))
+                self.notify_subscribers(order)
 
         except subprocess.CalledProcessError as e:
             print("Error: ", e.stderr)

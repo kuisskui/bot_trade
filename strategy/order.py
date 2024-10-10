@@ -1,5 +1,4 @@
 class Order:
-    def __init__(self, symbol, lot, order_type):
+    def __init__(self, symbol, order_type):
         self.symbol: str = symbol
-        self.lot: float = lot
         self.order_type: str = order_type
