@@ -25,12 +25,11 @@ async def run_strategies(request: Request):
 
         symbol = state.get("symbol")
         script = state.get("script")
-        trigger = state.get("trigger")
 
-        if not script or not trigger or not symbol:
-            return {"status": 400, "message": "Missing 'symbol', 'script' or 'trigger' in the request."}
+        if not script or not symbol:
+            return {"status": 400, "message": "Missing 'symbol' or 'script' in the request."}
 
-        strategy_manager.run_new_strategy(script, trigger, state)
+        strategy_manager.run_new_strategy(script, state)
 
         return {"status": 200, "message": "run successfully"}
     except Exception as e:
