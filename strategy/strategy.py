@@ -8,7 +8,7 @@ import subprocess
 import json
 import sys
 
-from order import Order
+from strategy.order import Order
 from bot.bot_trade import BotTrade
 load_dotenv()
 
