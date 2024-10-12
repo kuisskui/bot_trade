@@ -6,14 +6,14 @@ class BotManager:
     def __init__(self):
         self.__bots: List[BotTrade] = []
 
-    def create_new_bot(self):
+    def create_new_bot(self, lot):
         bot_id = 1
         while True:
             if bot_id not in [bot.bot_id for bot in self.__bots]:
                 break
             bot_id += 1
 
-        bot = BotTrade(bot_id)
+        bot = BotTrade(bot_id, lot)
         self.__bots.append(bot)
 
         return bot

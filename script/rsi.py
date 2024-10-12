@@ -35,4 +35,4 @@ if __name__ == "__main__":
     strategy = RSIStrategy(symbol, time_frame)
 
     order = Order(json_data['symbol'], strategy.get_signal())
-    print(json.dumps(order))
+    print(json.dumps(order.__dict__))

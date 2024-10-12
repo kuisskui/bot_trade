@@ -1,3 +1,4 @@
+from copy import deepcopy
 from pathlib import Path
 from typing import List
 from dotenv import load_dotenv
@@ -26,8 +27,8 @@ class Strategy:
 
         self.state = state
 
-        self.script = state['script']
-        self.trigger = state['trigger']
+        self.script = deepcopy(state['script'])
+        self.trigger = deepcopy(state['trigger'])
 
     def run(self):
         scheduler.add_job(

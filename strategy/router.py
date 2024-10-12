@@ -43,11 +43,12 @@ async def subscribe_strategy(request: Request):
         state = await request.json()
 
         strategy_id = state.get('strategy_id')
+        lot = state.get('lot')
 
-        if not strategy_id:
-            return {"status": 400, "message": "Missing 'strategy_id' in the request."}
+        if not strategy_id or not lot:
+            return {"status": 400, "message": "Missing 'strategy_id' or 'lot' in the request."}
 
-        bot = bot_manager.create_new_bot()
+        bot = bot_manager.create_new_bot(lot)
 
         strategy = strategy_manager.get_strategy_by_id(strategy_id)
 

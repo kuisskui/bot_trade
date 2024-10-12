@@ -29,6 +29,7 @@ class BotTrade:
             pass
 
     def update(self, order: Order):
+        print(f"bot_id: {self.bot_id}, order: {order.__dict__}")
         self.trade(order)
 
     def exit_order(self):
