@@ -21,14 +21,14 @@ class StrategyManager:
         self.__active_strategies.append(strategy)
         return strategy
 
-    def run_new_strategy(self, script, state):
+    def run_new_strategy(self, state):
         strategy_id = 1
         while True:
             if strategy_id not in [strategy.strategy_id for strategy in self.__active_strategies]:
                 break
             strategy_id += 1
 
-        strategy = Strategy(strategy_id, script, state)
+        strategy = Strategy(strategy_id, state)
         strategy.run()
 
         self.add_strategy(strategy)

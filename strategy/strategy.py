@@ -20,21 +20,24 @@ scheduler.start()
 
 
 class Strategy:
-    def __init__(self, strategy_id, script, state):
+    def __init__(self, strategy_id, state):
         self.strategy_id: int = strategy_id
-        self.script = script
-        self.state = state
         self.subscribers: List[BotTrade] = []
 
+        self.state = state
+
+        self.script = state['script']
+        self.trigger = state['trigger']
+
     def run(self):
-        cron_trigger = CronTrigger(**self.state['trigger'])
         scheduler.add_job(
             self.get_signal,
-            trigger=cron_trigger,
+            trigger=CronTrigger(**self.trigger),
             id=str(self.strategy_id)
         )
 
     def get_signal(self):
+        # Life cycle of Strategy
         try:
             result = subprocess.run(
                 [sys.executable, str(SCRIPT_DIR / self.script), json.dumps(self.state)],
