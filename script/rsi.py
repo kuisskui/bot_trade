@@ -28,8 +28,11 @@ class RSIStrategy:
 
 if __name__ == "__main__":
     json_data = json.loads(sys.argv[1])
+
     symbol = json_data['symbol']
     time_frame = json_data['time_frame']
+
     strategy = RSIStrategy(symbol, time_frame)
+
     order = Order(json_data['symbol'], strategy.get_signal())
     print(json.dumps(order))
