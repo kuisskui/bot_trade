@@ -10,7 +10,7 @@ class RSIStrategy:
         self.symbol = symbol
         self.time_frame = time_frame
 
-        self.overbought = 80
+        self.overbought = 70
         self.oversold = 30
         self.period = 14
 
