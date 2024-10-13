@@ -15,7 +15,7 @@ async def get_strategies():
 
 @strategy_router.get("/active")
 async def get_active_strategies():
-    return [(s.strategy_id, s.script, s.signal) for s in strategy_manager.get_active_strategies()]
+    return [s.__dict__ for s in strategy_manager.get_active_strategies()]
 
 
 @strategy_router.post("/run")
