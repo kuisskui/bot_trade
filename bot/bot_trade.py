@@ -1,3 +1,4 @@
+from datetime import datetime
 import script.api.mt5_api as mt5
 from strategy.order import Order
 
@@ -32,7 +33,7 @@ class BotTrade:
             pass
 
     def update(self, order: Order):
-        print(f"bot_id: {self.bot_id}, order: {order.__dict__}")
+        print(f"[{datetime.now().strftime("%x %X")}] : bot_id: {self.bot_id}, order: {order.__dict__}")
         self.trade(order)
 
     def exit_order(self):
