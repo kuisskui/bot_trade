@@ -1,4 +1,4 @@
-import script.mt5.mt5_api as mt5
+import script.api.mt5_api as mt5
 from strategy.order import Order
 
 
@@ -10,6 +10,7 @@ class BotTrade:
 
     def trade(self, order: Order):
         if order.order_type == 'buy':
+            mt5.initialize()
             self.exit_order()
             self.position_ticket = mt5.place_trade(
                 order.symbol,
@@ -17,6 +18,7 @@ class BotTrade:
                 order.order_type,
             )
         elif order.order_type == 'sell':
+            mt5.initialize()
             self.exit_order()
             self.position_ticket = mt5.place_trade(
                 order.symbol,
@@ -24,6 +26,7 @@ class BotTrade:
                 order.order_type,
             )
         elif order.order_type == 'exit':
+            mt5.initialize()
             self.exit_order()
         else:
             pass

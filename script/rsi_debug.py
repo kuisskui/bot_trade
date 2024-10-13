@@ -18,6 +18,8 @@ class RSIStrategy:
         mt5_api.initialize()
         previous_rsi = get_relative_strength_index(self.symbol, self.time_frame, 2, self.period)
         current_rsi = get_relative_strength_index(self.symbol, self.time_frame, 1, self.period)
+        print(f"previous rsi: {previous_rsi}")
+        print(f"current rsi: {current_rsi}")
 
         if previous_rsi > self.overbought > current_rsi:
             return 'sell'

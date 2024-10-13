@@ -1,4 +1,4 @@
-from script.mt5 import mt5_api
+from script.api import mt5_api
 
 
 class PriceActionStrategy:

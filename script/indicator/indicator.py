@@ -1,33 +1,33 @@
-from mt5.mt5_api import *
+from api.mt5_api import *
 
 import pandas as pd
 
 
 def get_moving_average(symbol, timeframe, shift, period):
-    rates = copy_rates_from_pos(symbol, timeframe, shift, period + shift)
+    rates = copy_rates_from_pos(symbol, timeframe, shift, period)
 
     data = pd.DataFrame(rates)
     data['time'] = pd.to_datetime(data['time'], unit='s')
 
-    ma = data['close'].rolling(window=period).mean().iloc[-1 - shift]
+    ma = data['close'].rolling(window=period).mean().iloc[-1]
 
     return ma
 
 
 def get_exponential_moving_average(symbol, timeframe, shift, period):
-    rates = copy_rates_from_pos(symbol, timeframe, shift, period + shift)
+    rates = copy_rates_from_pos(symbol, timeframe, shift, period)
 
     data = pd.DataFrame(rates)
     data['time'] = pd.to_datetime(data['time'], unit='s')
 
     # Calculate EMA using the Pandas ewm() function
-    ema = data['close'].ewm(span=period, adjust=False).mean().iloc[-1 - shift]
+    ema = data['close'].ewm(span=period, adjust=False).mean().iloc[-1]
 
     return ema
 
 
 def get_relative_strength_index(symbol, timeframe, shift, period):
-    rates = copy_rates_from_pos(symbol, timeframe, shift, period + shift)
+    rates = copy_rates_from_pos(symbol, timeframe, shift, period)
 
     data = pd.DataFrame(rates)
     data['time'] = pd.to_datetime(data['time'], unit='s')
@@ -48,7 +48,7 @@ def get_relative_strength_index(symbol, timeframe, shift, period):
 
 
 def get_bollinger_bands(symbol, timeframe, shift, period, std_dev):
-    rates = copy_rates_from_pos(symbol, timeframe, shift, period + shift)
+    rates = copy_rates_from_pos(symbol, timeframe, shift, period)
 
     data = pd.DataFrame(rates)
     data['time'] = pd.to_datetime(data['time'], unit='s')
@@ -69,7 +69,7 @@ def get_ema(data, period):
 
 
 def get_moving_average_convergence_divergence(symbol, timeframe, shift, short_period=12, long_period=26, signal_period=9):
-    rates = copy_rates_from_pos(symbol, timeframe, shift, long_period + shift)
+    rates = copy_rates_from_pos(symbol, timeframe, shift, long_period)
     data = pd.DataFrame(rates)
     data['time'] = pd.to_datetime(data['time'], unit='s')
 
