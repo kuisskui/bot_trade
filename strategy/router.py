@@ -8,7 +8,7 @@ from strategy.strategy_manager import strategy_manager
 strategy_router = APIRouter(prefix="/strategies")
 
 
-@strategy_router.get("/")
+@strategy_router.get("/all")
 async def get_strategies():
     return [s.split('.')[0] for s in strategy_manager.get_all_strategies()]
 
