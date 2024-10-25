@@ -42,42 +42,52 @@ class Strategy:
         self.job = None
 
     def run(self):
+        self.start()
+
+    def get_signal(self):
+        self.pre_execute()
+
+        self.execute()
+
+        self.post_execute()
+
+    def start(self):
         self.job = scheduler.add_job(
             self.get_signal,
             trigger=CronTrigger(**self.state['trigger']),
             id=str(self.strategy_id)
         )
 
-    def get_signal(self):
-        # Life cycle of Strategy
-        try:
-            result = subprocess.run(
-                [sys.executable, str(SCRIPT_DIR / self.state['script']), json.dumps(self.state)],
-                capture_output=True,
-                text=True
-            )
-
-            self.state = json.loads(result.stdout.strip())
-
-            orders = parse_order(self.state['order'])
-            self.job.modify(trigger=CronTrigger(**self.state['trigger']))
-
-            for order in orders:
-                self.notify_subscribers(order)
-
-        except subprocess.CalledProcessError as e:
-            self.exit()
-            print("Error: ", e.stderr)
-
     def exit(self):
+        self.job.remove()
+
+    def pre_execute(self):
         pass
+
+    def execute(self):
+        result = subprocess.run(
+            [sys.executable, str(SCRIPT_DIR / self.state['script']), json.dumps(self.state)],
+            capture_output=True,
+            text=True
+        )
+        self.state = json.loads(result.stdout.strip())
+
+    def post_execute(self):
+        self.job.modify(trigger=CronTrigger(**self.state['trigger']))
+        self.notify_subscribers()
+
+    def notify_subscribers(self):
+        if not self.state.get('order'):
+            return
+
+        orders = parse_order(self.state['order'])
+
+        for subscriber in self.subscribers:
+            for order in orders:
+                subscriber.update(order)
 
     def subscribe(self, subscriber: BotTrade):
         self.subscribers.append(subscriber)
 
     def unsubscribe(self, subscriber: BotTrade):
         self.subscribers.remove(subscriber)
-
-    def notify_subscribers(self, order: Order):
-        for subscriber in self.subscribers:
-            subscriber.update(order)
