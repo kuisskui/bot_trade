@@ -1,5 +1,4 @@
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
-from apscheduler.triggers.cron import CronTrigger
 from strategy.strategy import Strategy
 from typing import List
 from dotenv import load_dotenv
