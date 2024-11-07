@@ -63,27 +63,25 @@ This document provides documents for creating new strategies and interfaces, inc
     return: void
     ```
 
-## API
-```
-   GET: /bots
-   > get all active bots
-```
-```
-   GET: /strategies/all
-   > get all saved strategies
-```
-```
-   GET: /strategies/active
-   > get all active strategies
-```
-```
-   POST: /strategies/run
-   > run a strategies
-```
-```
-   POST: /strategies/subscribe
-   > subscribe for following trade to a strategy
-```
+## APIs
+1. Get all active bots
+> GET: /bots  
+
+2. Get all saved strategies
+> GET: /strategies/all  
+
+3. Get all active strategies
+> GET: /strategies/active  
+
+4. Save a python file as a new strategy
+> POST: /strategies/save_strategy  
+
+5. Run a strategies
+> POST: /strategies/run  
+
+6. Subscribe for following trade to a strategy
+> POST: /strategies/subscribe  
+
 
 ## Development Collaborative Project Goals
 ### User cases
