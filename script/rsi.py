@@ -22,7 +22,7 @@ elif previous_rsi < oversold < current_rsi:
     order = Order(symbol, "buy")
 else:
     order = Order(symbol, "hold")
-new_state = {"order": order}
+new_state = {"order": order.__dict__}
 current_state = update_state(current_state, new_state)
 
 end(current_state)

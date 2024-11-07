@@ -9,7 +9,7 @@ num = random.randint(1, 100)
 signal = "buy" if num % 2 == 0 else "sell"
 
 new_order = Order(symbol, signal)
-new_state = {"order": new_order}
+new_state = {"order": new_order.__dict__}
     
 state = update_state(state, new_state)
 

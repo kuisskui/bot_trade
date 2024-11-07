@@ -12,4 +12,4 @@ def update_state(current_state: typing.Dict, new_state: typing.Dict):
 
 
 def end(state: typing.Dict):
-    print(state)
+    print(json.dumps(state))
