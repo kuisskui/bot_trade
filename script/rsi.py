@@ -1,40 +1,28 @@
-import json
-import sys
 from strategy.order import Order
 from api import mt5_api
 from indicator.indicator import get_relative_strength_index
+from api.api import *
 
+current_state = get_state()
 
-class RSIStrategy:
-    def __init__(self, symbol, time_frame):
-        self.symbol = symbol
-        self.time_frame = time_frame
+symbol = current_state['symbol']
+time_frame = current_state['time_frame']
 
-        self.overbought = 70
-        self.oversold = 30
-        self.period = 14
+overbought = 70
+oversold = 30
+period = 14
 
-    def get_signal(self):
-        mt5_api.initialize()
-        previous_rsi = get_relative_strength_index(self.symbol, self.time_frame, 2, self.period)
-        current_rsi = get_relative_strength_index(self.symbol, self.time_frame, 1, self.period)
+mt5_api.initialize()
+previous_rsi = get_relative_strength_index(symbol, time_frame, 2, period)
+current_rsi = get_relative_strength_index(symbol, time_frame, 1, period)
 
-        if previous_rsi > self.overbought > current_rsi:
-            return 'sell'
-        elif previous_rsi < self.oversold < current_rsi:
-            return 'buy'
-        return 'hold'
+if previous_rsi > overbought > current_rsi:
+    order = Order(symbol, "sell")
+elif previous_rsi < oversold < current_rsi:
+    order = Order(symbol, "buy")
+else:
+    order = Order(symbol, "hold")
+new_state = {"order": order}
+current_state = update_state(current_state, new_state)
 
-
-if __name__ == "__main__":
-    json_data = json.loads(sys.argv[1])
-
-    symbol = json_data['symbol']
-    time_frame = json_data['time_frame']
-
-    strategy = RSIStrategy(symbol, time_frame)
-
-    order = Order(json_data['symbol'], strategy.get_signal())
-
-    output_data = json_data | {"order": order}
-    print(json.dumps(output_data))
+end(current_state)

@@ -64,6 +64,26 @@ This document provides documents for creating new strategies and interfaces, inc
     ```
 
 ## API
+```
+   GET: /bots
+   > get all active bots
+```
+```
+   GET: /strategies/all
+   > get all saved strategies
+```
+```
+   GET: /strategies/active
+   > get all active strategies
+```
+```
+   POST: /strategies/run
+   > run a strategies
+```
+```
+   POST: /strategies/subscribe
+   > subscribe for following trade to a strategy
+```
 
 ## Development Collaborative Project Goals
 ### User cases

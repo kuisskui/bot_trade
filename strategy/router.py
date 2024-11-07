@@ -57,14 +57,3 @@ async def subscribe_strategy(request: Request):
         return {"status": 200, "message": "subscribe successfully"}
     except Exception as e:
         return {"status": 500, "message": str(e)}
-
-
-@strategy_router.websocket("/ws")
-async def strategy(websocket: WebSocket):
-    try:
-        await websocket.accept()
-        while True:
-            await sleep(1)
-            await websocket.send_text("Strategy interface")
-    except Exception as e:
-        print(e)
